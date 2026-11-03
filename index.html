@@ -188,7 +188,7 @@
    ===================================================================== */
 const GEM_URL = "https://gemini.google.com/gem/1mSmH73XweN1kNRD-sL3crKpajRgk_LHc?usp=sharing";
 const GEMINI_URL = "https://gemini.google.com/app";
-const PROMPT = "你是「考卷錯題小幫手」。使用者會上傳學生考卷的照片或 PDF 檔（國文、英文、數學、自然、社會等任何科目），請照下面規則整理。\n\n【要做的事】\n1. 考卷上有老師批改痕跡時：只挑出被批改為「錯」的題目（紅筆打叉、扣分、圈起來、有訂正的題目），答對的不要列出來。\n   考卷沒有批改痕跡時（空白題目卷、題庫、之前印出來的錯題重練卷）：把全部題目都整理出來。\n2. 每一題寫出正確答案。正確答案的依據順序：答案卷或答案頁 → 老師寫的訂正 → 你自己判斷。你沒有把握的題目，\"sure\" 要設成 false。\n3. 每一題寫一句簡短的解說（why）和一句觀念重點（tip），寫給國中小學生看，簡單好懂。數學題的 why 要寫出關鍵算式。\n4. 每一題再出一題「同觀念、換內容」的變化題（var），難度和原題一樣。數學變化題要換數字並重新算出正確答案，答案一定要驗算過。\n5. 題目有圖片時（看圖選答案、幾何圖形、實驗裝置圖、地圖、圖表），把圖片裡解題需要的資訊改用文字寫進題目，例如：「如圖：三角形 ABC，∠A=90°，AB=3，AC=4」。\n\n【輸出規則（非常重要）】\n- 一律使用繁體中文（英文科的英文內容照原文）。\n- 使用者傳來的不管是照片、PDF 還是打字的文字，都照這份說明整理，不要拒絕，也不要說「超出範圍」。\n- 只輸出一個 ```json 程式碼框，程式碼框前後不要有任何其他文字。\n- 一定要照下面的格式。\n- 照片模糊、看不清楚時不要猜，只回覆一句：「這張照片看不清楚，請重拍（考卷攤平、光線充足、正面拍）」。\n- 這一頁沒有錯題時，輸出 {\"q\":[]}。\n- 使用者之後在同一個對話上傳下一頁時，同樣只輸出那一頁的題目。\n\n【PDF 或一次上傳多頁時】\n- 一次最多整理 2 頁，避免輸出太長被截斷。\n- 還有頁面沒整理完時，在 JSON 最外層加上 \"more\":\"還有第 3～5 頁\"。\n- 使用者回覆「繼續」時，接著整理下 2 頁。全部整理完的那一次，就不要加 \"more\"。\n- 同一個檔案裡如果有答案卷或答案頁，用它來決定正確答案，不要把答案頁本身當成題目。\n\n【格式】\n{\"title\":\"考卷名稱，例如：七年級數學 第一次段考\",\"subj\":\"科目（國文／英文／數學／自然／社會／其他）\",\"q\":[ 題目, 題目, … ]}\n\n題目有四種：\n\n1) 選擇題 \"t\":\"c\"\n{\"t\":\"c\",\"sec\":\"一、選擇題\",\"p\":\"下列何者正確？\",\"sent\":\"題目內容\",\"o\":[\"選項一\",\"選項二\",\"選項三\",\"選項四\"],\"a\":2,\"why\":\"…\",\"tip\":\"…\",\"sure\":true,\"var\":{\"sent\":\"…\",\"o\":[\"…\",\"…\",\"…\",\"…\"],\"a\":0,\"why\":\"…\"}}\n- \"a\" 是正確選項的位置，從 0 開始算：A(或①)=0、B=1、C=2、D=3。\n- 選項裡不要再寫 (A)(B) 或 ①②。\n\n2) 填答題 \"t\":\"f\"（答案是一個詞、一個數字、一個名詞、一個字）\n{\"t\":\"f\",\"sec\":\"二、填充題\",\"p\":\"計算下列各式\",\"sent\":\"(-3)² + 4 × (-2) = ____\",\"a\":[\"1\"],\"why\":\"(-3)²=9，4×(-2)=-8，9-8=1。\",\"tip\":\"先算次方，再乘除，最後加減。\",\"sure\":true,\"var\":{\"sent\":\"(-2)³ + 5 × 3 = ____\",\"a\":[\"7\"],\"why\":\"(-2)³=-8，5×3=15，-8+15=7。\"}}\n- \"a\" 列出所有可以接受的寫法，例如 [\"0.5\",\"1/2\",\"二分之一\"]、[\"光合作用\"]、[\"12 公分\",\"12公分\",\"12\"]。\n- 英文單字題的 a 也可以只放一個字串，例如 \"a\":\"junior\"。\n\n3) 寫句子／多個空格 \"t\":\"w\"（英文句子、中翻英、句型轉換、改錯、一題有好幾個空格）\n{\"t\":\"w\",\"sec\":\"六、中翻英\",\"p\":\"中翻英\",\"sent\":\"他是我的狗。牠的名字叫洛基（Rocky）。\",\"a\":[\"It's my dog. Its name is Rocky.\",\"It is my dog. Its name is Rocky.\"],\"why\":\"「牠的」是 Its，沒有撇號。\",\"tip\":\"Its＝牠的；It's＝It is。\",\"sure\":true,\"var\":{\"sent\":\"這是我的貓。牠的名字叫咪咪（Mimi）。\",\"a\":[\"This is my cat. Its name is Mimi.\"],\"why\":\"「牠的」是 Its。\"}}\n- 一題有好幾個空格或 A、B 兩句時，不用 \"a\"，改用 \"parts\":[{\"label\":\"(1)\",\"a\":[\"…\"]},{\"label\":\"(2)\",\"a\":[\"…\"]}]。\n\n4) 自己對答案 \"t\":\"s\"（沒辦法用標準答案自動比對的題目：要寫計算過程的應用題、證明、問答、申論、作文、畫圖、實驗設計）\n{\"t\":\"s\",\"sec\":\"四、應用題\",\"p\":\"請寫出算式和答案\",\"sent\":\"小明買 3 枝筆，每枝 15 元，付 100 元，應找回多少元？\",\"a\":\"100 - 15 × 3 = 55\\n答：55 元\",\"why\":\"先算總價 15×3=45，再用 100 減 45。\",\"tip\":\"找錢＝付的錢－總價。\",\"sure\":true,\"var\":{\"sent\":\"小華買 4 本筆記本，每本 25 元，付 200 元，應找回多少元？\",\"a\":\"200 - 25 × 4 = 100\\n答：100 元\",\"why\":\"總價 25×4=100，200-100=100。\"}}\n- \"a\" 是參考答案，可以分多行（用 \\n 換行），把完整算式或重點寫清楚。\n- 只有最後答案要比對的計算題，請用 \"t\":\"f\"，把算式寫在 why。\n\n【共用欄位】\n- \"passage\"：閱讀文章、題組說明、克漏字短文、實驗說明，要完整抄下來，不要刪減。\n- \"dlg\"：對話，格式是 [[\"說話的人\",\"內容\"], …]（英文對話題用）。\n- \"sent\"：題目句子。空格寫成 ____。「依畫線部分」的畫線文字用 [[ ]] 包起來，例如 His name is [[Lucas]].\n- 題組的變化題可以用同一篇文章、只換問題，var 裡面就不用再寫 passage。\n- 數學符號用一般文字：² ³ √ π × ÷ ≤ ≥ ≠ ∠ △ °，分數寫成 3/4，帶分數寫成 2又1/3。不要用 LaTeX。\n- 國文注音直接寫注音符號；英文的撇號一律用一般的 ' 。\n";
+const PROMPT = "你是「考卷錯題小幫手」。使用者會上傳學生考卷的照片或 PDF 檔（國文、英文、數學、自然、社會等任何科目），請照下面規則整理。\n\n【科目】\n- 使用者可能會先傳一句「這是【某科】考卷」和該科的注意事項，請照做，\"subj\" 就填使用者說的科目。\n- 「外語」包含英文、日文等：題目和答案保留原本的語言，解說用繁體中文。\n\n【要做的事】\n1. 考卷上有老師批改痕跡時：只挑出被批改為「錯」的題目（紅筆打叉、扣分、圈起來、有訂正的題目），答對的不要列出來。\n   考卷沒有批改痕跡時（空白題目卷、題庫、之前印出來的錯題重練卷）：把全部題目都整理出來。\n2. 每一題寫出正確答案。正確答案的依據順序：答案卷或答案頁 → 老師寫的訂正 → 你自己判斷。你沒有把握的題目，\"sure\" 要設成 false。\n3. 每一題寫一句簡短的解說（why）和一句觀念重點（tip），寫給國中小學生看，簡單好懂。數學題的 why 要寫出關鍵算式。\n4. 每一題再出一題「同觀念、換內容」的變化題（var），難度和原題一樣。數學變化題要換數字並重新算出正確答案，答案一定要驗算過。\n5. 題目有圖片時（看圖選答案、幾何圖形、實驗裝置圖、地圖、圖表），把圖片裡解題需要的資訊改用文字寫進題目，例如：「如圖：三角形 ABC，∠A=90°，AB=3，AC=4」。\n\n【輸出規則（非常重要）】\n- 一律使用繁體中文（英文科的英文內容照原文）。\n- 使用者傳來的不管是照片、PDF 還是打字的文字，都照這份說明整理，不要拒絕，也不要說「超出範圍」。\n- 只輸出一個 ```json 程式碼框，程式碼框前後不要有任何其他文字。\n- 一定要照下面的格式。\n- 照片模糊、看不清楚時不要猜，只回覆一句：「這張照片看不清楚，請重拍（考卷攤平、光線充足、正面拍）」。\n- 這一頁沒有錯題時，輸出 {\"q\":[]}。\n- 使用者之後在同一個對話上傳下一頁時，同樣只輸出那一頁的題目。\n\n【PDF 或一次上傳多頁時】\n- 一次最多整理 2 頁，避免輸出太長被截斷。\n- 還有頁面沒整理完時，在 JSON 最外層加上 \"more\":\"還有第 3～5 頁\"。\n- 使用者回覆「繼續」時，接著整理下 2 頁。全部整理完的那一次，就不要加 \"more\"。\n- 同一個檔案裡如果有答案卷或答案頁，用它來決定正確答案，不要把答案頁本身當成題目。\n\n【格式】\n{\"title\":\"考卷名稱，例如：七年級數學 第一次段考\",\"subj\":\"科目（國文／外語／數學／自然／社會／其他）\",\"q\":[ 題目, 題目, … ]}\n\n題目有四種：\n\n1) 選擇題 \"t\":\"c\"\n{\"t\":\"c\",\"sec\":\"一、選擇題\",\"p\":\"下列何者正確？\",\"sent\":\"題目內容\",\"o\":[\"選項一\",\"選項二\",\"選項三\",\"選項四\"],\"a\":2,\"why\":\"…\",\"tip\":\"…\",\"sure\":true,\"var\":{\"sent\":\"…\",\"o\":[\"…\",\"…\",\"…\",\"…\"],\"a\":0,\"why\":\"…\"}}\n- \"a\" 是正確選項的位置，從 0 開始算：A(或①)=0、B=1、C=2、D=3。\n- 選項裡不要再寫 (A)(B) 或 ①②。\n\n2) 填答題 \"t\":\"f\"（答案是一個詞、一個數字、一個名詞、一個字）\n{\"t\":\"f\",\"sec\":\"二、填充題\",\"p\":\"計算下列各式\",\"sent\":\"(-3)² + 4 × (-2) = ____\",\"a\":[\"1\"],\"why\":\"(-3)²=9，4×(-2)=-8，9-8=1。\",\"tip\":\"先算次方，再乘除，最後加減。\",\"sure\":true,\"var\":{\"sent\":\"(-2)³ + 5 × 3 = ____\",\"a\":[\"7\"],\"why\":\"(-2)³=-8，5×3=15，-8+15=7。\"}}\n- \"a\" 列出所有可以接受的寫法，例如 [\"0.5\",\"1/2\",\"二分之一\"]、[\"光合作用\"]、[\"12 公分\",\"12公分\",\"12\"]。\n- 英文單字題的 a 也可以只放一個字串，例如 \"a\":\"junior\"。\n\n3) 寫句子／多個空格 \"t\":\"w\"（英文句子、中翻英、句型轉換、改錯、一題有好幾個空格）\n{\"t\":\"w\",\"sec\":\"六、中翻英\",\"p\":\"中翻英\",\"sent\":\"他是我的狗。牠的名字叫洛基（Rocky）。\",\"a\":[\"It's my dog. Its name is Rocky.\",\"It is my dog. Its name is Rocky.\"],\"why\":\"「牠的」是 Its，沒有撇號。\",\"tip\":\"Its＝牠的；It's＝It is。\",\"sure\":true,\"var\":{\"sent\":\"這是我的貓。牠的名字叫咪咪（Mimi）。\",\"a\":[\"This is my cat. Its name is Mimi.\"],\"why\":\"「牠的」是 Its。\"}}\n- 一題有好幾個空格或 A、B 兩句時，不用 \"a\"，改用 \"parts\":[{\"label\":\"(1)\",\"a\":[\"…\"]},{\"label\":\"(2)\",\"a\":[\"…\"]}]。\n\n4) 自己對答案 \"t\":\"s\"（沒辦法用標準答案自動比對的題目：要寫計算過程的應用題、證明、問答、申論、作文、畫圖、實驗設計）\n{\"t\":\"s\",\"sec\":\"四、應用題\",\"p\":\"請寫出算式和答案\",\"sent\":\"小明買 3 枝筆，每枝 15 元，付 100 元，應找回多少元？\",\"a\":\"100 - 15 × 3 = 55\\n答：55 元\",\"why\":\"先算總價 15×3=45，再用 100 減 45。\",\"tip\":\"找錢＝付的錢－總價。\",\"sure\":true,\"var\":{\"sent\":\"小華買 4 本筆記本，每本 25 元，付 200 元，應找回多少元？\",\"a\":\"200 - 25 × 4 = 100\\n答：100 元\",\"why\":\"總價 25×4=100，200-100=100。\"}}\n- \"a\" 是參考答案，可以分多行（用 \\n 換行），把完整算式或重點寫清楚。\n- 只有最後答案要比對的計算題，請用 \"t\":\"f\"，把算式寫在 why。\n\n【共用欄位】\n- \"passage\"：閱讀文章、題組說明、克漏字短文、實驗說明，要完整抄下來，不要刪減。\n- \"dlg\"：對話，格式是 [[\"說話的人\",\"內容\"], …]（英文對話題用）。\n- \"sent\"：題目句子。空格寫成 ____。「依畫線部分」的畫線文字用 [[ ]] 包起來，例如 His name is [[Lucas]].\n- 題組的變化題可以用同一篇文章、只換問題，var 裡面就不用再寫 passage。\n- 數學符號用一般文字：² ³ √ π × ÷ ≤ ≥ ≠ ∠ △ °，分數寫成 3/4，帶分數寫成 2又1/3。不要用 LaTeX。\n- 國文注音直接寫注音符號；英文的撇號一律用一般的 ' 。\n";
 
 /* ===================== 範例考卷（第一份考卷） ===================== */
 const SAMPLE_BANK = [
@@ -406,9 +406,10 @@ const SAMPLE_BANK = [
 
 /* ===================== 資料庫（存在這台裝置上） ===================== */
 const DBKEY = "eng-mastery-db-v3";
-function newDB(){ return { sets:[{id:"sample", name:"範例：七年級英語（Starter～Unit 1 錯題）", subj:"英文", created:Date.now(), bank:SAMPLE_BANK}], prog:{}, sound:true, draft:null }; }
+function newDB(){ return { sets:[{id:"sample", name:"範例：七年級英語（Starter～Unit 1 錯題）", subj:"外語", created:Date.now(), bank:SAMPLE_BANK}], prog:{}, sound:true, draft:null }; }
 function loadDB(){ try{ const d=JSON.parse(localStorage.getItem(DBKEY)); if(d && Array.isArray(d.sets)) return d; }catch(e){} return null; }
 let DB = loadDB() || newDB();
+DB.sets.forEach(s=>{ if(s.id==="sample") s.subj="外語"; if(s.subj==="英文"||s.subj==="英語") s.subj="外語"; });
 function saveDB(){ try{ localStorage.setItem(DBKEY, JSON.stringify(DB)); }catch(e){ toast("這台裝置的儲存空間不足，請刪掉一些舊考卷"); } }
 
 let VIEW="home", CUR=null, BANK=[], BY_ID={}, S=null;
@@ -443,7 +444,7 @@ function englishOf(v){
 }
 function speak(t){ if(!t || !("speechSynthesis" in window)) return; speechSynthesis.cancel();
   const u=new SpeechSynthesisUtterance(t); u.lang="en-US"; u.rate=.85; speechSynthesis.speak(u); }
-function isEng(){ return !CUR || !CUR.subj || /英/.test(CUR.subj); }
+function isEng(){ return !CUR || !CUR.subj || /英|外語/.test(CUR.subj); }
 function speakItem(id,v){ speak(englishOf(BY_ID[id].variants[v])); }
 
 /* ===================== 批改 ===================== */
@@ -566,20 +567,30 @@ function renderWizard(){
   const back = st>1 ? `<button class="btn gray" onclick="wizGo(${next&&st===4?3:st-1})">‹ 上一步</button>` : `<button class="btn gray" onclick="cancelWizard()">✕ 取消</button>`;
   let body="";
   if(st===1){
-    body=`<h2><span class="stepno">1</span>打開考卷小幫手</h2>
-      <p>需要準備：<b>手機裝好 Gemini App（免費）</b>，以及<b>老師改好的考卷</b>（要有紅筆批改）。</p>
+    const sj=d.subj||"";
+    body=`<h2><span class="stepno">1</span>選科目，打開考卷小幫手</h2>
+      <p style="margin-top:0">需要準備：<b>手機裝好 Gemini App（免費）</b>，以及考卷照片或 PDF。</p>
+      <div style="font-weight:800;margin:6px 0 8px">這是哪一科的考卷？</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">${SUBJ.map(s=>`<button class="btn ${sj===s[0]?"pri":"gray"}" style="padding:0 6px" onclick="pickSubj('${s[0]}')">${s[1]} ${s[0]}</button>`).join("")}</div>
+      ${sj && subjLine(sj) ? `<div class="note" style="margin-top:10px">✓ 已複製「${esc(sj)}」的提示句。等一下在 Gemini 輸入框<b>長按 → 貼上</b>，再附上照片一起送出。
+        <button class="linkbtn" onclick="copyText(subjLine('${esc(sj)}'))">再複製一次</button></div>` : ""}
+      <div style="height:14px"></div>`;
+    body+= !sj ? `<button class="btn gray big full" disabled>✨ 先選上面的科目</button>` : `
       ${GEM_URL ? `
         <a class="btn pri big full" href="${esc(GEM_URL)}" target="_blank" rel="noopener" onclick="setTimeout(()=>wizGo(2),400)">✨ 打開「考卷錯題小幫手」</a>
         <p class="small">會開啟 Gemini。第一次使用時，如果出現登入畫面，用 Google 帳號登入即可。</p>` : `
         <div class="stack">
-          <div><b>① 先複製整理指令</b><br><button class="btn pri full" style="margin-top:6px" onclick="copyText(PROMPT).then(()=>{DB.draft.copied=true;saveDB();renderWizard();})">📋 複製指令${d.copied?"（已複製 ✓）":""}</button></div>
+          <div><b>① 先複製整理指令</b><br><button class="btn pri full" style="margin-top:6px" onclick="copyText(PROMPT+(subjLine(DB.draft.subj||'')?'\n\n'+subjLine(DB.draft.subj):'')).then(()=>{DB.draft.copied=true;saveDB();renderWizard();})">📋 複製指令${d.copied?"（已複製 ✓）":""}</button></div>
           <div><b>② 打開 Gemini，開一個新對話</b><br><a class="btn ok full" style="margin-top:6px" href="${GEMINI_URL}" target="_blank" rel="noopener">打開 Gemini ›</a></div>
           <div class="note">在 Gemini 的輸入框<b>長按 → 貼上</b>剛剛複製的指令，<b>先不要送出</b>，下一步要一起附上照片。</div>
         </div>`}`;
   } else if(st===2){
     body=`<h2><span class="stepno">2</span>${next?"上傳下一頁":"上傳考卷"}</h2>
       ${next ? `<div class="note" style="margin-bottom:10px">回到<b>剛才同一個 Gemini 對話</b>，直接上傳下一頁就好，<b>不用再貼指令</b>。</div>`:""}
-      <p style="margin-top:0">在 Gemini 對話框按 <b>＋</b>，選一種方式${GEM_URL||next?"，然後按送出":"，跟剛剛貼上的指令<b>一起送出</b>"}：</p>
+      ${!next && subjLine(d.subj||"") ? `<div class="pv" style="margin-bottom:10px;border:2px solid var(--pri)"><b>① 先貼上科目提示句</b><br>在 Gemini 輸入框<b>長按 → 貼上</b>（剛剛已經幫你複製好了）。
+        <button class="btn gray sm" style="margin-top:6px" onclick="copyText(subjLine(DB.draft.subj))">📋 再複製一次科目提示句</button></div>
+        <b>② 再按 ＋ 附上考卷，跟提示句一起送出</b>` : ""}
+      <p style="margin-top:6px">在 Gemini 對話框按 <b>＋</b>，選一種方式${GEM_URL||next?"，然後按送出":"，跟剛剛貼上的指令<b>一起送出</b>"}：</p>
       <div class="stack">
         <div class="pv"><b>📸 現場拍照</b>　選「相機」<ul class="tips" style="font-size:16px">
           <li><b>一次只拍一頁</b>，考卷攤平放在桌上</li>
@@ -613,7 +624,7 @@ function renderWizard(){
     body=renderPreview();
   }
   app.innerHTML=`${bar}<div class="card wiz">${body}
-    ${st<4?`<div class="nav">${back}<button class="btn pri" onclick="wizGo(${st+1})">${st===3?"我複製好了 ›":"下一步 ›"}</button></div>`:""}
+    ${st<4?`<div class="nav">${back}<button class="btn pri" onclick="wizGo(${st+1})" ${st===1&&!d.subj?"disabled":""}>${st===3?"我複製好了 ›":"下一步 ›"}</button></div>`:""}
     ${st===4?`<div class="nav">${back}<span></span></div>`:""}
   </div>`;
 }
@@ -621,6 +632,22 @@ async function pasteFromClipboard(){
   try{ const t=await navigator.clipboard.readText(); if(t){ document.getElementById("pasteBox").value=t; processPaste(); return; } }catch(e){}
   toast("請長按框框，選「貼上」");
   document.getElementById("pasteBox").focus();
+}
+
+/* ---------- 科目提示 ---------- */
+const SUBJ=[
+  ["國文","📖","注意字形、注音、成語和修辭；國字答案請用正確的繁體字，同音字容易寫錯的要特別說明。"],
+  ["外語","🔤","題目和答案保留原本的語言（英文、日文等），解說用繁體中文。"],
+  ["數學","📐","每一題的答案都要自己驗算一次；計算題的 why 寫出關鍵算式；變化題要換數字並重新算出答案。"],
+  ["自然","🔬","圖表、實驗裝置圖請改寫成文字；數值要寫清楚單位；化學式、符號照課本寫法。"],
+  ["社會","🌏","地圖、圖表、年表請改寫成文字；人名、地名、專有名詞照課本寫法。"],
+  ["其他","📝",""]
+];
+function subjLine(name){ const s=SUBJ.find(x=>x[0]===name); return s&&s[2] ? `這是【${name}】考卷，請照使用說明整理。${s[2]}` : ""; }
+function pickSubj(name){
+  DB.draft.subj=name; saveDB();
+  const line=subjLine(name);
+  if(line) copyText(line).then(ok=>{ DB.draft.copiedSubj=ok; saveDB(); renderWizard(); }); else renderWizard();
 }
 
 /* ---------- 解析 Gemini 的回覆 ---------- */
