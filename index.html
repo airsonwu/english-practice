@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>英語錯題精熟練習</title>
+<title>錯題精熟練習</title>
 <style>
   :root{
     --bg:#f3f5f9; --card:#fff; --ink:#1e293b; --sub:#64748b; --line:#e2e8f0;
@@ -168,8 +168,8 @@
 <header>
   <div class="hwrap">
     <div class="logo">
-      <div class="ic">EN</div>
-      <div style="min-width:0"><h1>英語錯題精熟練習</h1><p id="phaseLabel"></p></div>
+      <div class="ic">✓</div>
+      <div style="min-width:0"><h1>錯題精熟練習</h1><p id="phaseLabel"></p></div>
     </div>
     <div class="hbtns">
       <button class="iconbtn" id="homeBtn" onclick="goHome()" aria-label="回考卷列表">🏠</button>
@@ -188,7 +188,7 @@
    ===================================================================== */
 const GEM_URL = "https://gemini.google.com/gem/1mSmH73XweN1kNRD-sL3crKpajRgk_LHc?usp=sharing";
 const GEMINI_URL = "https://gemini.google.com/app";
-const PROMPT = "你是「英語考卷錯題整理小幫手」。使用者會上傳學生英語考卷的照片或 PDF 檔，請照下面規則整理。\n\n【要做的事】\n1. 考卷上有老師批改痕跡時：只挑出被批改為「錯」的題目（紅筆打叉、扣分、圈起來、有訂正的題目），答對的不要列出來。\n   考卷沒有批改痕跡時（空白題目卷、題庫、之前印出來的錯題重練卷）：把全部題目都整理出來。\n2. 每一題寫出正確答案。正確答案的依據順序：答案卷或答案頁 → 老師寫的訂正 → 你自己判斷。你沒有把握的題目，\"sure\" 要設成 false。\n3. 每一題寫一句簡短的中文解說（why）和一句觀念重點（tip），寫給國中生看，簡單好懂。\n4. 每一題再出一題「同觀念、換內容」的變化題（var），難度和原題一樣。\n5. 題目有圖片時（例如看圖選答案），把圖片內容改成文字寫進題目或選項裡。\n\n【輸出規則（非常重要）】\n- 一律使用繁體中文。\n- 使用者傳來的不管是照片、PDF 還是打字的文字，都照這份說明整理，不要拒絕，也不要說「超出範圍」。\n- 只輸出一個 ```json 程式碼框，程式碼框前後不要有任何其他文字。\n- 一定要照下面的格式。\n- 照片模糊、看不清楚時不要猜，只回覆一句：「這張照片看不清楚，請重拍（考卷攤平、光線充足、正面拍）」。\n- 這一頁沒有錯題時，輸出 {\"q\":[]}。\n- 使用者之後在同一個對話上傳下一頁時，同樣只輸出那一頁的題目。\n\n【PDF 或一次上傳多頁時】\n- 一次最多整理 2 頁，避免輸出太長被截斷。\n- 還有頁面沒整理完時，在 JSON 最外層加上 \"more\":\"還有第 3～5 頁\"。\n- 使用者回覆「繼續」時，接著整理下 2 頁。全部整理完的那一次，就不要加 \"more\"。\n- 同一個檔案裡如果有答案卷或答案頁，用它來決定正確答案，不要把答案頁本身當成題目。\n\n【格式】\n{\"title\":\"考卷名稱，例如：七年級英語 Unit 1\",\"q\":[ 題目, 題目, … ]}\n\n題目有三種：\n\n1) 選擇題 \"t\":\"c\"\n{\"t\":\"c\",\"sec\":\"二、選擇題\",\"p\":\"選出最適當的答案\",\"dlg\":[[\"A\",\"____ Heather?\"],[\"B\",\"She's Ben's wife.\"]],\"o\":[\"How's\",\"Is she\",\"Who's\",\"Are you\"],\"a\":2,\"why\":\"答句說明她的身分，所以用 Who's 問「她是誰」。\",\"tip\":\"問身分用 Who。\",\"sure\":true,\"var\":{\"dlg\":[[\"A\",\"____ that man?\"],[\"B\",\"He's my uncle.\"]],\"o\":[\"What's\",\"How's\",\"Is he\",\"Who's\"],\"a\":3,\"why\":\"答句說明他的身分，所以用 Who's。\"}}\n- \"a\" 是正確選項的位置，從 0 開始算：A=0、B=1、C=2、D=3。\n\n2) 單字填空 \"t\":\"f\"（只填一個單字）\n{\"t\":\"f\",\"sec\":\"一、單字\",\"p\":\"依句意拼寫出正確單字\",\"sent\":\"Irene is fourteen. She is a j____ high school student.\",\"a\":\"junior\",\"hint\":\"j 開頭，「國中」的國。\",\"why\":\"14 歲是國中生，國中是 junior high school。\",\"tip\":\"國中＝junior high school。\",\"sure\":true,\"var\":{\"sent\":\"Tom is thirteen. He is a j____ high school student.\",\"a\":\"junior\",\"hint\":\"j 開頭。\",\"why\":\"13 歲是國中生。\"}}\n\n3) 寫句子 \"t\":\"w\"（句型轉換、中翻英、重組、造句）\n{\"t\":\"w\",\"sec\":\"六、中翻英\",\"p\":\"中翻英\",\"sent\":\"他是我的狗。牠的名字叫洛基（Rocky）。\",\"a\":[\"It's my dog. Its name is Rocky.\",\"It is my dog. Its name is Rocky.\"],\"why\":\"「牠的」是 Its，沒有撇號。\",\"tip\":\"Its＝牠的；It's＝It is。\",\"sure\":true,\"var\":{\"sent\":\"這是我的貓。牠的名字叫咪咪（Mimi）。\",\"a\":[\"This is my cat. Its name is Mimi.\"],\"why\":\"「牠的」是 Its。\"}}\n- \"a\" 列出所有可以接受的寫法，最標準的放第一個。\n- 要寫 A、B 兩句對話時，不用 \"a\"，改用 \"parts\":[{\"label\":\"A\",\"a\":[\"…\"]},{\"label\":\"B\",\"a\":[\"…\"]}]。\n\n【共用欄位】\n- \"passage\"：閱讀測驗文章或克漏字短文，要完整抄下來，不要刪減。\n- \"dlg\"：對話，格式是 [[\"說話的人\",\"內容\"], …]。\n- \"sent\"：題目句子。空格寫成 ____。「依畫線部分」的畫線文字用 [[ ]] 包起來，例如 His name is [[Lucas]].\n- 閱讀題的變化題可以用同一篇文章、只換問題，var 裡面就不用再寫 passage。\n- 英文的撇號一律用一般的 ' 。\n";
+const PROMPT = "你是「考卷錯題小幫手」。使用者會上傳學生考卷的照片或 PDF 檔（國文、英文、數學、自然、社會等任何科目），請照下面規則整理。\n\n【要做的事】\n1. 考卷上有老師批改痕跡時：只挑出被批改為「錯」的題目（紅筆打叉、扣分、圈起來、有訂正的題目），答對的不要列出來。\n   考卷沒有批改痕跡時（空白題目卷、題庫、之前印出來的錯題重練卷）：把全部題目都整理出來。\n2. 每一題寫出正確答案。正確答案的依據順序：答案卷或答案頁 → 老師寫的訂正 → 你自己判斷。你沒有把握的題目，\"sure\" 要設成 false。\n3. 每一題寫一句簡短的解說（why）和一句觀念重點（tip），寫給國中小學生看，簡單好懂。數學題的 why 要寫出關鍵算式。\n4. 每一題再出一題「同觀念、換內容」的變化題（var），難度和原題一樣。數學變化題要換數字並重新算出正確答案，答案一定要驗算過。\n5. 題目有圖片時（看圖選答案、幾何圖形、實驗裝置圖、地圖、圖表），把圖片裡解題需要的資訊改用文字寫進題目，例如：「如圖：三角形 ABC，∠A=90°，AB=3，AC=4」。\n\n【輸出規則（非常重要）】\n- 一律使用繁體中文（英文科的英文內容照原文）。\n- 使用者傳來的不管是照片、PDF 還是打字的文字，都照這份說明整理，不要拒絕，也不要說「超出範圍」。\n- 只輸出一個 ```json 程式碼框，程式碼框前後不要有任何其他文字。\n- 一定要照下面的格式。\n- 照片模糊、看不清楚時不要猜，只回覆一句：「這張照片看不清楚，請重拍（考卷攤平、光線充足、正面拍）」。\n- 這一頁沒有錯題時，輸出 {\"q\":[]}。\n- 使用者之後在同一個對話上傳下一頁時，同樣只輸出那一頁的題目。\n\n【PDF 或一次上傳多頁時】\n- 一次最多整理 2 頁，避免輸出太長被截斷。\n- 還有頁面沒整理完時，在 JSON 最外層加上 \"more\":\"還有第 3～5 頁\"。\n- 使用者回覆「繼續」時，接著整理下 2 頁。全部整理完的那一次，就不要加 \"more\"。\n- 同一個檔案裡如果有答案卷或答案頁，用它來決定正確答案，不要把答案頁本身當成題目。\n\n【格式】\n{\"title\":\"考卷名稱，例如：七年級數學 第一次段考\",\"subj\":\"科目（國文／英文／數學／自然／社會／其他）\",\"q\":[ 題目, 題目, … ]}\n\n題目有四種：\n\n1) 選擇題 \"t\":\"c\"\n{\"t\":\"c\",\"sec\":\"一、選擇題\",\"p\":\"下列何者正確？\",\"sent\":\"題目內容\",\"o\":[\"選項一\",\"選項二\",\"選項三\",\"選項四\"],\"a\":2,\"why\":\"…\",\"tip\":\"…\",\"sure\":true,\"var\":{\"sent\":\"…\",\"o\":[\"…\",\"…\",\"…\",\"…\"],\"a\":0,\"why\":\"…\"}}\n- \"a\" 是正確選項的位置，從 0 開始算：A(或①)=0、B=1、C=2、D=3。\n- 選項裡不要再寫 (A)(B) 或 ①②。\n\n2) 填答題 \"t\":\"f\"（答案是一個詞、一個數字、一個名詞、一個字）\n{\"t\":\"f\",\"sec\":\"二、填充題\",\"p\":\"計算下列各式\",\"sent\":\"(-3)² + 4 × (-2) = ____\",\"a\":[\"1\"],\"why\":\"(-3)²=9，4×(-2)=-8，9-8=1。\",\"tip\":\"先算次方，再乘除，最後加減。\",\"sure\":true,\"var\":{\"sent\":\"(-2)³ + 5 × 3 = ____\",\"a\":[\"7\"],\"why\":\"(-2)³=-8，5×3=15，-8+15=7。\"}}\n- \"a\" 列出所有可以接受的寫法，例如 [\"0.5\",\"1/2\",\"二分之一\"]、[\"光合作用\"]、[\"12 公分\",\"12公分\",\"12\"]。\n- 英文單字題的 a 也可以只放一個字串，例如 \"a\":\"junior\"。\n\n3) 寫句子／多個空格 \"t\":\"w\"（英文句子、中翻英、句型轉換、改錯、一題有好幾個空格）\n{\"t\":\"w\",\"sec\":\"六、中翻英\",\"p\":\"中翻英\",\"sent\":\"他是我的狗。牠的名字叫洛基（Rocky）。\",\"a\":[\"It's my dog. Its name is Rocky.\",\"It is my dog. Its name is Rocky.\"],\"why\":\"「牠的」是 Its，沒有撇號。\",\"tip\":\"Its＝牠的；It's＝It is。\",\"sure\":true,\"var\":{\"sent\":\"這是我的貓。牠的名字叫咪咪（Mimi）。\",\"a\":[\"This is my cat. Its name is Mimi.\"],\"why\":\"「牠的」是 Its。\"}}\n- 一題有好幾個空格或 A、B 兩句時，不用 \"a\"，改用 \"parts\":[{\"label\":\"(1)\",\"a\":[\"…\"]},{\"label\":\"(2)\",\"a\":[\"…\"]}]。\n\n4) 自己對答案 \"t\":\"s\"（沒辦法用標準答案自動比對的題目：要寫計算過程的應用題、證明、問答、申論、作文、畫圖、實驗設計）\n{\"t\":\"s\",\"sec\":\"四、應用題\",\"p\":\"請寫出算式和答案\",\"sent\":\"小明買 3 枝筆，每枝 15 元，付 100 元，應找回多少元？\",\"a\":\"100 - 15 × 3 = 55\\n答：55 元\",\"why\":\"先算總價 15×3=45，再用 100 減 45。\",\"tip\":\"找錢＝付的錢－總價。\",\"sure\":true,\"var\":{\"sent\":\"小華買 4 本筆記本，每本 25 元，付 200 元，應找回多少元？\",\"a\":\"200 - 25 × 4 = 100\\n答：100 元\",\"why\":\"總價 25×4=100，200-100=100。\"}}\n- \"a\" 是參考答案，可以分多行（用 \\n 換行），把完整算式或重點寫清楚。\n- 只有最後答案要比對的計算題，請用 \"t\":\"f\"，把算式寫在 why。\n\n【共用欄位】\n- \"passage\"：閱讀文章、題組說明、克漏字短文、實驗說明，要完整抄下來，不要刪減。\n- \"dlg\"：對話，格式是 [[\"說話的人\",\"內容\"], …]（英文對話題用）。\n- \"sent\"：題目句子。空格寫成 ____。「依畫線部分」的畫線文字用 [[ ]] 包起來，例如 His name is [[Lucas]].\n- 題組的變化題可以用同一篇文章、只換問題，var 裡面就不用再寫 passage。\n- 數學符號用一般文字：² ³ √ π × ÷ ≤ ≥ ≠ ∠ △ °，分數寫成 3/4，帶分數寫成 2又1/3。不要用 LaTeX。\n- 國文注音直接寫注音符號；英文的撇號一律用一般的 ' 。\n";
 
 /* ===================== 範例考卷（第一份考卷） ===================== */
 const SAMPLE_BANK = [
@@ -406,7 +406,7 @@ const SAMPLE_BANK = [
 
 /* ===================== 資料庫（存在這台裝置上） ===================== */
 const DBKEY = "eng-mastery-db-v3";
-function newDB(){ return { sets:[{id:"sample", name:"範例：七年級英語（Starter～Unit 1 錯題）", created:Date.now(), bank:SAMPLE_BANK}], prog:{}, sound:true, draft:null }; }
+function newDB(){ return { sets:[{id:"sample", name:"範例：七年級英語（Starter～Unit 1 錯題）", subj:"英文", created:Date.now(), bank:SAMPLE_BANK}], prog:{}, sound:true, draft:null }; }
 function loadDB(){ try{ const d=JSON.parse(localStorage.getItem(DBKEY)); if(d && Array.isArray(d.sets)) return d; }catch(e){} return null; }
 let DB = loadDB() || newDB();
 function saveDB(){ try{ localStorage.setItem(DBKEY, JSON.stringify(DB)); }catch(e){ toast("這台裝置的儲存空間不足，請刪掉一些舊考卷"); } }
@@ -443,51 +443,60 @@ function englishOf(v){
 }
 function speak(t){ if(!t || !("speechSynthesis" in window)) return; speechSynthesis.cancel();
   const u=new SpeechSynthesisUtterance(t); u.lang="en-US"; u.rate=.85; speechSynthesis.speak(u); }
+function isEng(){ return !CUR || !CUR.subj || /英/.test(CUR.subj); }
 function speakItem(id,v){ speak(englishOf(BY_ID[id].variants[v])); }
 
 /* ===================== 批改 ===================== */
 const CONTR=[["what's","what is"],["who's","who is"],["where's","where is"],["how's","how is"],["that's","that is"],["he's","he is"],["she's","she is"],["it's","it is"],["name's","name is"],["isn't","is not"],["aren't","are not"],["i'm","i am"],["you're","you are"],["they're","they are"],["we're","we are"]];
 function norm(s){
-  s=fixQ(s).toLowerCase().replace(/[“”"]/g," ").replace(/[.,!?;:，。？！、()（）]/g," ");
+  s=fixQ(s).normalize("NFKC").toLowerCase().replace(/[“”"]/g," ").replace(/[.,!?;:，。？！、()（）]/g," ");
   CONTR.forEach(([a,b])=>{ s=s.replace(new RegExp("(^|\\s)"+a+"(?=\\s|$)","g"),"$1"+b); });
-  return s.replace(/\s+/g," ").trim();
+  s=s.replace(/\s+/g," ").trim();
+  if(/[\u3100-\u312f\u4e00-\u9fff]/.test(s)) s=s.replace(/\s+/g,"");
+  return s.replace(/\s*([=+×÷*<>≤≥≠^²³√%°])\s*/g,"$1").replace(/(\d)\s+(?=\d)/g,"$1");
 }
 function V(item){ return BY_ID[item.id].variants[item.v]; }
 function cur(){ return S.queue[S.idx]; }
+const CJK=/[\u3100-\u312f\u4e00-\u9fff]/;
+function chipsOK(v){ return v.type==="write" && v.parts.every(p=>!CJK.test(p.answers[0]) && p.answers[0].trim().split(/\s+/).length>=3); }
+function modeOf(item){ const v=V(item); return chipsOK(v) ? (S.modes[item.id]||"chips") : "type"; }
 function partAnswers(item){
   const v=V(item), key=item.id;
   if(v.type!=="write") return [S.answers[key]];
   return v.parts.map((p,i)=>{
-    if((S.modes[key]||"chips")==="chips"){ const c=S.chips[key]&&S.chips[key][i]; return c? c.picked.map(k=>c.tokens[k]).join(" ") : ""; }
+    if(modeOf(item)==="chips"){ const c=S.chips[key]&&S.chips[key][i]; return c? c.picked.map(k=>c.tokens[k]).join(" ") : ""; }
     return (S.answers[key]||[])[i]||"";
   });
 }
 function isAnswered(item){
   const v=V(item);
   if(v.type==="choice") return S.answers[item.id]!==undefined && S.answers[item.id]!==null;
+  if(v.type==="self") return S.self && S.self[item.id]!==undefined;
   return partAnswers(item).every(a=>(a||"").trim()!=="");
 }
 function grade(item){
   const v=V(item);
   if(v.type==="choice") return {ok: S.answers[item.id]===v.answer, note:""};
+  if(v.type==="self") return {ok: !!(S.self && S.self[item.id]===true), note:""};
   if(v.type==="fill") return {ok: v.answers.some(a=>norm(a)===norm(S.answers[item.id])), note:""};
   const ans=partAnswers(item); let ok=true, note="";
   v.parts.forEach((p,i)=>{
     const a=fixQ(ans[i]).trim();
     if(!p.answers.some(x=>norm(x)===norm(a))){ ok=false; return; }
     const endWant=p.answers[0].trim().slice(-1);
-    if(a && (a[0]!==a[0].toUpperCase() || (/[.?!]/.test(endWant) && a.slice(-1)!==endWant))) note="意思正確，但句首要大寫、句尾要加「"+endWant+"」，正式考試會被扣分喔！";
+    if(a && !CJK.test(p.answers[0]) && /^[A-Za-z]/.test(p.answers[0]) && (a[0]!==a[0].toUpperCase() || (/[.?!]/.test(endWant) && a.slice(-1)!==endWant))) note="意思正確，但句首要大寫、句尾要加「"+endWant+"」，正式考試會被扣分喔！";
   });
   return {ok, note};
 }
 function correctText(v){
   if(v.type==="choice") return v.options[v.answer];
-  if(v.type==="fill") return v.answers[0];
+  if(v.type==="fill"||v.type==="self") return v.answers[0];
   return v.parts.map(p=>(p.label?p.label+"：":"")+p.answers[0]).join("\n");
 }
 function userText(item){
   const v=V(item);
   if(v.type==="choice"){ const a=S.answers[item.id]; return a===undefined||a===null ? "（未作答）" : v.options[a]; }
+  if(v.type==="self") return (S.answers[item.id]||"").trim() || "（寫在紙上／未輸入）";
   const arr=partAnswers(item);
   if(v.type==="fill") return arr[0]||"（未作答）";
   return v.parts.map((p,i)=>(p.label?p.label+"：":"")+(arr[i]||"（未作答）")).join("\n");
@@ -505,18 +514,23 @@ function statusOf(set){
   if(p.phase==="report" && p.round===1) return ["第一次測驗已交卷","amber"];
   return [`錯題練習中（第 ${p.round} 輪）`,"amber"];
 }
+let FILTER="";
 function renderHome(){
   setLabel("選一份考卷開始練習");
+  const subs=[...new Set(DB.sets.map(s=>s.subj||"其他"))];
+  if(FILTER && !subs.includes(FILTER)) FILTER="";
+  const list=DB.sets.filter(s=>!FILTER || (s.subj||"其他")===FILTER);
   const n=DB.sets.length;
   app.innerHTML=`
     <button class="btn pri big full" onclick="startWizard()">📷 新增考卷（用手機拍照）</button>
     <div class="row" style="margin:6px 2px 14px"><span class="small">共 ${n} 份考卷</span>
       <button class="linkbtn" onclick="startWizard(4)">已經有考卷代碼？點這裡貼上</button></div>
-    <div class="stack">${DB.sets.map(set=>{
+    ${subs.length>1?`<div class="setbtns" style="margin-bottom:12px">${["",...subs].map(s=>`<button class="btn sm ${FILTER===s?"pri":"gray"}" onclick="FILTER='${esc(s)}';renderHome()">${s?esc(s):"全部"}</button>`).join("")}</div>`:""}
+    <div class="stack">${list.map(set=>{
       const [st,cls]=statusOf(set); const p=DB.prog[set.id];
       return `<div class="card setcard">
         <div class="row" style="align-items:flex-start"><h3>${esc(set.name)}</h3><span class="tag ${cls}" style="white-space:nowrap">${st}</span></div>
-        <div class="small">${set.bank.length} 題 · ${new Date(set.created).toLocaleDateString("zh-TW")}</div>
+        <div class="small">${set.subj?`<span class="tag" style="font-size:13px;padding:2px 10px">${esc(set.subj)}</span>　`:""}${set.bank.length} 題 · ${new Date(set.created).toLocaleDateString("zh-TW")}</div>
         <div class="setbtns">
           <button class="btn ${p&&p.phase==="done"?"gray":"ok"}" onclick="openSet('${set.id}')">${!p?"開始作答 ›":p.phase==="done"?"查看成績":"繼續 ›"}</button>
           <button class="btn gray sm" onclick="shareSet('${set.id}')">📲 傳到平板</button>
@@ -632,20 +646,24 @@ function autoExtra(ans){
   return shuffle([...new Set(c)]).slice(0,2);
 }
 function mkVariant(q){
-  const type={c:"choice",f:"fill",w:"write"}[q.t]; if(!type) throw Error("看不出是什麼題型");
+  const type={c:"choice",f:"fill",w:"write",s:"self"}[q.t]; if(!type) throw Error("看不出是什麼題型");
   const v={type, prompt:String(q.p||"請作答："), why:String(q.why||""), hint:String(q.hint||"")};
   if(q.passage) v.passage=String(q.passage);
   if(Array.isArray(q.dlg)&&q.dlg.length) v.dialogue=q.dlg.map(d=>Array.isArray(d)?[String(d[0]||""),String(d[1]==null?"":d[1])]:["",String(d)]);
   if(q.sent) v.sentence=esc(q.sent).replace(/\[\[(.+?)\]\]/g,"<u>$1</u>");
   if(type==="choice"){
     if(!Array.isArray(q.o)||q.o.length<2) throw Error("缺少選項");
-    v.options=q.o.map(o=>String(o).replace(/^\s*\(?[A-Da-d][).]\s*/,""));
+    v.options=q.o.map(o=>String(o).replace(/^\s*(\(?[A-Da-d][).]|\([A-Da-d]\)|[①②③④⑤])\s*/,""));
     v.answer=typeof q.a==="string"&&/^[A-Da-d]$/.test(q.a.trim()) ? "abcd".indexOf(q.a.trim().toLowerCase()) : Number(q.a);
     if(!(v.answer>=0&&v.answer<v.options.length)) throw Error("正確答案的位置不正確");
   }
   if(type==="fill"){
     const a=(Array.isArray(q.a)?q.a:[q.a]).filter(x=>x!=null&&String(x).trim()).map(x=>fixQ(x).trim());
     if(!a.length) throw Error("缺少答案"); v.answers=a;
+  }
+  if(type==="self"){
+    const a=Array.isArray(q.a)?q.a.join("\n"):String(q.a==null?"":q.a);
+    if(!a.trim()) throw Error("缺少參考答案"); v.answers=[a.trim()];
   }
   if(type==="write"){
     const parts = Array.isArray(q.parts)&&q.parts.length
@@ -688,6 +706,7 @@ async function processPaste(){
     if(!o.q.length) empty++;
     if(o.title && !d.title) d.title=String(o.title);
     d.more = o.more ? String(o.more) : "";
+    if(o.subj && !d.subj) d.subj=String(o.subj);
     o.q.forEach((q,i)=>{ try{ d.bank.push(convertQ(q)); added++; }catch(e){ errs.push(`有 1 題無法讀取（${e.message}），已略過`); } });
   });
   if(!added && !empty){
@@ -695,7 +714,7 @@ async function processPaste(){
     return;
   }
   d.pages++; d.lastMsg = (empty&&!added) ? "這一頁 Gemini 判斷沒有錯題。" : `這次新增了 ${added} 題。` + (errs.length?`<br>${errs.join("<br>")}`:"");
-  if(!d.name) d.name = d.title || `英語考卷 ${new Date().toLocaleDateString("zh-TW")}`;
+  if(!d.name) d.name = d.title || `考卷 ${new Date().toLocaleDateString("zh-TW")}`;
   saveDB(); tone(523,.12); wizGo(5);
 }
 function fixLine(){
@@ -716,6 +735,8 @@ function renderPreview(){
     <div style="margin-top:16px">
       <label class="small" for="setName"><b>考卷名稱</b></label>
       <input class="txt" id="setName" style="font-size:18px;margin-top:4px" value="${esc(d.name)}" oninput="DB.draft.name=this.value;saveDB()">
+      <label class="small" for="setSubj" style="display:block;margin-top:10px"><b>科目</b></label>
+      <input class="txt" id="setSubj" style="font-size:18px;margin-top:4px" value="${esc(d.subj||"")}" placeholder="例如：數學" oninput="DB.draft.subj=this.value;saveDB()">
     </div>
     <div class="stack" style="margin-top:16px">
       <button class="btn warn full" onclick="DB.draft.lastMsg='';wizGo(2)">＋ 還有其他頁或檔案要加</button>
@@ -728,7 +749,8 @@ function previewItem(b,i){
   const ctx=[v.passage, v.dialogue&&v.dialogue.map(x=>(x[0]?x[0]+": ":"")+x[1]).join("\n"), v.sentence&&v.sentence.replace(/<\/?u>/g,"")].filter(Boolean).join("\n");
   let ans="";
   if(v.type==="choice") ans=`<div class="stack">${v.options.map((o,oi)=>`<button class="opt ${oi===v.answer?"right":""}" onclick="pvChoice(${i},${oi})"><span class="L">${"ABCD"[oi]||oi+1}</span><span>${esc(o)}${oi===v.answer?"　✓ 正確答案":""}</span></button>`).join("")}</div>`;
-  else if(v.type==="fill") ans=`<div class="small">正確答案：</div><input class="txt" value="${esc(v.answers[0])}" onchange="pvText(${i},0,this.value)">`;
+  else if(v.type==="fill") ans=`<div class="small">正確答案${v.answers.length>1?`（也接受：${esc(v.answers.slice(1).join("、"))}）`:""}：</div><input class="txt" value="${esc(v.answers[0])}" onchange="pvText(${i},0,this.value)">`;
+  else if(v.type==="self") ans=`<div class="small">參考答案（孩子自己對答案）：</div><textarea class="txt" style="font-size:16px;min-height:90px" onchange="pvText(${i},0,this.value)">${esc(v.answers[0])}</textarea>`;
   else ans=v.parts.map((p,pi)=>`<div class="small">${p.label?p.label+" 句":""}正確答案：</div><input class="txt" value="${esc(p.answers[0])}" onchange="pvText(${i},${pi},this.value)">`).join("");
   return `<div class="pv ${b.sure?"":"unsure"}">
     <div class="row"><span class="tag ${b.sure?"":"amber"}">第 ${i+1} 題${b.sec?"｜"+esc(b.sec):""}</span>
@@ -744,7 +766,7 @@ function previewItem(b,i){
 }
 function pvChoice(i,oi){ const b=DB.draft.bank[i]; b.variants[0].answer=oi; b.sure=true; saveDB(); renderWizard(); }
 function pvText(i,pi,val){ const b=DB.draft.bank[i], v=b.variants[0]; val=fixQ(val).trim(); if(!val) return;
-  if(v.type==="fill") v.answers=[val]; else { v.parts[pi].answers=[val]; v.parts[pi].extra=autoExtra(val); }
+  if(v.type==="fill"||v.type==="self") v.answers=[val]; else { v.parts[pi].answers=[val]; v.parts[pi].extra=autoExtra(val); }
   b.sure=true; saveDB(); toast("已更新答案 ✓"); }
 function pvSure(i){ DB.draft.bank[i].sure=true; saveDB(); renderWizard(); }
 function pvDel(i){ DB.draft.bank.splice(i,1); saveDB(); renderWizard(); }
@@ -756,7 +778,7 @@ function finishWizard(){
       [["回去確認","gray","closeModal()"],["先存起來","ok","closeModal();DB.draft.okUnsure=true;finishWizard()"]]);
     return;
   }
-  const set={id:"s"+uid(), name:(d.name||"英語考卷").trim(), created:Date.now(), bank:d.bank};
+  const set={id:"s"+uid(), name:(d.name||"考卷").trim(), subj:(d.subj||"").trim(), created:Date.now(), bank:d.bank};
   DB.sets.unshift(set); DB.draft=null; saveDB();
   VIEW="home"; render();
   modal("考卷存好了！🎉",`「${esc(set.name)}」共 ${set.bank.length} 題。要在哪一台作答？`,
@@ -769,7 +791,7 @@ function finishWizard(){
 function b64u(bytes){ let s=""; for(let i=0;i<bytes.length;i+=0x8000) s+=String.fromCharCode.apply(null,bytes.subarray(i,i+0x8000)); return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); }
 function unb64u(str){ str=str.replace(/-/g,"+").replace(/_/g,"/"); const bin=atob(str); const out=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) out[i]=bin.charCodeAt(i); return out; }
 async function encodeSet(set){
-  const bytes=new TextEncoder().encode(JSON.stringify({n:set.name,b:set.bank}));
+  const bytes=new TextEncoder().encode(JSON.stringify({n:set.name,s:set.subj||"",b:set.bank}));
   if("CompressionStream" in window){
     try{ const st=new Blob([bytes]).stream().pipeThrough(new CompressionStream("deflate-raw"));
       return "EQ1z"+b64u(new Uint8Array(await new Response(st).arrayBuffer())); }catch(e){}
@@ -796,11 +818,11 @@ async function shareSet(id){
       [...(canShare?[["用 LINE／訊息分享","ok","doShare()"]]:[]),["複製考卷代碼",canShare?"gray":"ok","copyText(SHARE.code)"],["關閉","gray","closeModal()"]]);
   }
 }
-async function doShare(){ try{ await navigator.share(SHARE.link?{title:"英語錯題練習",text:"點開連結就能開始練習：",url:SHARE.link}:{title:"英語錯題考卷代碼",text:SHARE.code}); }catch(e){} }
+async function doShare(){ try{ await navigator.share(SHARE.link?{title:"錯題練習",text:"點開連結就能開始練習：",url:SHARE.link}:{title:"錯題考卷代碼",text:SHARE.code}); }catch(e){} }
 function addSharedSet(o){
   const exists=DB.sets.find(s=>s.name===o.n && s.bank.length===o.b.length && s.bank[0].id===o.b[0].id);
   if(exists){ DB.draft=null; saveDB(); VIEW="home"; render(); toast("這份考卷已經在列表裡了"); return; }
-  const set={id:"s"+uid(), name:o.n||"英語考卷", created:Date.now(), bank:o.b};
+  const set={id:"s"+uid(), name:o.n||"考卷", subj:o.s||"", created:Date.now(), bank:o.b};
   DB.sets.unshift(set); DB.draft=null; saveDB(); VIEW="home"; render();
   modal("收到考卷了！🎉",`「${esc(set.name)}」共 ${set.bank.length} 題，已經加到列表。`,[["稍後再做","gray","closeModal()"],["開始作答","ok",`closeModal();openSet('${set.id}')`]]);
 }
@@ -826,7 +848,7 @@ const save=saveProg;
 function ensureItemState(item){
   const v=V(item), key=item.id;
   if(v.type==="choice" && !S.orders[key]){ const idxs=v.options.map((_,i)=>i); S.orders[key] = S.round===1 ? idxs : shuffle(idxs); }
-  if(v.type==="write" && !S.chips[key]){
+  if(v.type==="write" && chipsOK(v) && !S.chips[key]){
     S.chips[key]=v.parts.map(p=>{ const toks=p.answers[0].split(" ").filter(Boolean).concat(p.extra||[]); return {tokens:toks, order:shuffle(toks.map((_,i)=>i)), picked:[]}; });
   }
 }
@@ -840,7 +862,7 @@ function renderQuestion(){
   ensureItemState(item);
   const answered=S.queue.filter(isAnswered).length;
   setLabel((S.phase==="test"?"第一次測驗":`第 ${S.round} 輪 錯題重測`)+`｜已作答 ${answered} / ${total}`);
-  const eng=englishOf(v);
+  const eng=isEng()?englishOf(v):"";
   app.innerHTML = `
     <div class="row small"><span>第 ${S.idx+1} 題 / 共 ${total} 題</span><span>${Math.round(answered/total*100)}% 已作答</span></div>
     <div class="prog"><div style="width:${answered/total*100}%"></div></div>
@@ -868,14 +890,25 @@ function inputHtml(item){
       <button class="opt ${sel===oi?"sel":""}" onclick="pick(${oi})"><span class="L">${"ABCDEF"[pos]}</span><span>${esc(v.options[oi])}</span></button>`).join("")}</div>`;
   }
   const hint = v.hint ? (S.hintOpen[key] ? `<div class="hint">💡 提示：${esc(v.hint)}</div>` : `<button class="linkbtn" onclick="openHint()">💡 看提示</button>`) : "";
-  if(v.type==="fill") return `<input class="txt" id="fillIn" value="${esc(S.answers[key]||"")}" oninput="typeFill(this.value)" placeholder="輸入完整單字" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">${hint}`;
-  const mode=S.modes[key]||"chips";
-  const sw=`<div class="row" style="margin-top:6px"><span class="small">${mode==="chips"?"點單字排出句子（裡面有混入用不到的字喔）":"用鍵盤打出完整句子"}</span>
-    <button class="linkbtn" onclick="switchMode()">${mode==="chips"?"⌨️ 改用鍵盤":"🧩 改用字卡"}</button></div>`;
+  if(v.type==="self"){
+    S.self=S.self||{}; S.reveal=S.reveal||{};
+    const rv=S.reveal[key], sv=S.self[key];
+    return `<textarea class="txt" style="font-size:18px;font-weight:600;min-height:120px" oninput="typeFill(this.value)" placeholder="把答案或算式寫在這裡（也可以寫在紙上）">${esc(S.answers[key]||"")}</textarea>
+      ${!rv ? `<button class="btn warn full" style="margin-top:10px" onclick="revealSelf()">寫好了，看參考答案自己對 ›</button>`
+      : `<div class="cmp" style="grid-template-columns:1fr"><div class="ans"><div class="lab">✓ 參考答案</div><div class="val" style="white-space:pre-line">${esc(v.answers[0])}</div></div></div>
+        ${v.why?`<div class="explain" style="margin-top:0">💡 ${esc(v.why)}</div>`:""}
+        <div class="prompt" style="font-size:18px">跟參考答案比一比，你寫對了嗎？</div>
+        <div class="opts two"><button class="opt ${sv===true?"right":""}" onclick="setSelf(true)"><span class="L">✓</span><span>我寫對了</span></button>
+        <button class="opt ${sv===false?"wrongpick":""}" onclick="setSelf(false)"><span class="L">✗</span><span>我寫錯了</span></button></div>`}`;
+  }
+  if(v.type==="fill") return `<input class="txt" id="fillIn" value="${esc(S.answers[key]||"")}" oninput="typeFill(this.value)" placeholder="輸入答案" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">${hint}`;
+  const mode=modeOf(item);
+  const sw= chipsOK(v) ? `<div class="row" style="margin-top:6px"><span class="small">${mode==="chips"?"點單字排出句子（裡面有混入用不到的字喔）":"用鍵盤打出完整句子"}</span>
+    <button class="linkbtn" onclick="switchMode()">${mode==="chips"?"⌨️ 改用鍵盤":"🧩 改用字卡"}</button></div>` : "";
   return sw + v.parts.map((p,i)=>{
     const lab=p.label?`<div class="partlabel">${esc(p.label)} 句</div>`:"";
     if(mode==="type"){ const val=(S.answers[key]||[])[i]||"";
-      return `${lab}<input class="txt" style="font-size:19px" value="${esc(val)}" oninput="typePart(${i},this.value)" placeholder="在這裡輸入英文句子" autocomplete="off" autocorrect="off" spellcheck="false">`; }
+      return `${lab}<input class="txt" style="font-size:19px" value="${esc(val)}" oninput="typePart(${i},this.value)" placeholder="在這裡輸入答案" autocomplete="off" autocorrect="off" spellcheck="false">`; }
     const c=S.chips[key][i];
     const tray=c.picked.length ? c.picked.map((k,pi)=>`<button class="chip on" onclick="unchip(${i},${pi})">${esc(c.tokens[k])}</button>`).join("") : `<span class="ph">點下面的字卡放到這裡…</span>`;
     const bank=c.order.filter(k=>!c.picked.includes(k)).map(k=>`<button class="chip" onclick="chip(${i},${k})">${esc(c.tokens[k])}</button>`).join("");
@@ -897,6 +930,8 @@ function chip(i,k){ S.chips[cur().id][i].picked.push(k); tone(500,.05); renderQu
 function unchip(i,pi){ S.chips[cur().id][i].picked.splice(pi,1); tone(360,.05); renderQuestion(); }
 function clearChips(i){ S.chips[cur().id][i].picked=[]; renderQuestion(); }
 function switchMode(){ const k=cur().id; S.modes[k]=(S.modes[k]||"chips")==="chips"?"type":"chips"; renderQuestion(); }
+function revealSelf(){ S.reveal=S.reveal||{}; S.reveal[cur().id]=true; renderQuestion(); }
+function setSelf(ok){ S.self=S.self||{}; S.self[cur().id]=ok; tone(ok?520:300,.08); renderQuestion(); }
 function openHint(){ S.hintOpen[cur().id]=true; renderQuestion(); }
 function trySubmit(){
   const left=S.queue.map((q,i)=>isAnswered(q)?null:i+1).filter(x=>x);
@@ -933,7 +968,7 @@ function renderReview(){
   app.innerHTML=`<div class="banner"><div class="small" style="color:#fff;opacity:.9">錯題解說模式</div><h2>這 ${items.length} 題要搞懂</h2>
       <div style="font-size:15px">紅色是你的答案、綠色是正確答案。看完解說後，會用「同觀念的新題目」再考一次！</div></div>
     <div class="stack">${items.map((item,n)=>{
-      const v=V(item), b=BY_ID[item.id], eng=englishOf(v); let body="";
+      const v=V(item), b=BY_ID[item.id], eng=isEng()?englishOf(v):""; let body="";
       if(v.type==="choice"){
         body=`<div class="opts">${S.orders[item.id].map((oi,pos)=>{ const cls=oi===v.answer?"right":(S.answers[item.id]===oi?"wrongpick":"");
           return `<div class="opt ${cls}"><span class="L">${"ABCDEF"[pos]}</span><span>${esc(v.options[oi])}${oi===v.answer?"　✓":""}${cls==="wrongpick"?"　✗ 你選的":""}</span></div>`;}).join("")}</div>`;
@@ -954,7 +989,7 @@ function startRetest(){
   S.round++;
   const want = S.round%2===0 ? 1 : 0;
   S.queue = S.wrong.map(id=>({id, v:Math.min(want, BY_ID[id].variants.length-1)}));
-  S.queue.forEach(q=>{ delete S.answers[q.id]; delete S.orders[q.id]; delete S.chips[q.id]; delete S.modes[q.id]; delete S.hintOpen[q.id]; });
+  S.queue.forEach(q=>{ delete S.answers[q.id]; delete S.orders[q.id]; delete S.chips[q.id]; delete S.modes[q.id]; delete S.hintOpen[q.id]; if(S.self) delete S.self[q.id]; if(S.reveal) delete S.reveal[q.id]; });
   S.idx=0; S.phase="retest"; save(); renderQuestion(); window.scrollTo(0,0);
 }
 function finish(){ S.phase="done"; save(); renderDone(true); }
@@ -1003,7 +1038,8 @@ function examQ(vv,n){
     return `<div class="q"><div class="qh"><span class="no">(　　) ${n}.</span><span>${esc(vv.prompt)}</span></div>
       <div class="body">${pCtx(vv)}<div class="ops ${long?"col":""}">${vv.options.map((o,i)=>`<div>(${"ABCDEF"[i]}) ${esc(o)}</div>`).join("")}</div></div></div>`;
   }
-  if(vv.type==="fill") return `<div class="q"><div class="qh"><span class="no">${n}.</span><span>${esc(vv.prompt)}</span></div><div class="body">${pCtx(vv)}</div></div>`;
+  if(vv.type==="fill") return `<div class="q"><div class="qh"><span class="no">${n}.</span><span>${esc(vv.prompt)}</span></div><div class="body">${pCtx(vv)}${/_{3,}/.test((vv.sentence||"")+(vv.passage||""))?"":'<div class="line">答：</div>'}</div></div>`;
+  if(vv.type==="self") return `<div class="q"><div class="qh"><span class="no">${n}.</span><span>${esc(vv.prompt)}</span></div><div class="body">${pCtx(vv)}<div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div></div>`;
   const lines=vv.parts.map(p=>{ const two=p.answers[0].length>55; return `<div class="line">${p.label?esc(p.label)+"：":""}</div>${two?'<div class="line"></div>':""}`; }).join("");
   return `<div class="q"><div class="qh"><span class="no">${n}.</span><span>${esc(vv.prompt)}</span></div><div class="body">${pCtx(vv)}${lines}</div></div>`;
 }
@@ -1011,6 +1047,7 @@ function keyQ(vv,n,b){
   let a;
   if(vv.type==="choice") a=`(${"ABCDEF"[vv.answer]}) ${esc(vv.options[vv.answer])}`;
   else if(vv.type==="fill") a=esc(vv.answers[0]);
+  else if(vv.type==="self") a=`<span style="white-space:pre-line">${esc(vv.answers[0])}</span>`;
   else a=vv.parts.map(p=>(p.label?esc(p.label)+"：":"")+esc(p.answers[0])).join("<br>");
   const ref=vv.type==="choice"?"":pPlain(vv);
   return `<div class="q"><div class="qh"><span class="no">${n}.</span><span class="ans">${a}</span></div>
@@ -1028,7 +1065,7 @@ function buildPrint(set,v,kind){
   return `<div class="pa"><h1>${esc(set.name)}</h1>
     <div class="sub">${kind==="exam"?"錯題重練卷":"答案與解說"}${ver}　共 ${n} 題</div>
     ${kind==="exam"?`<div class="meta"><span>班級：__________</span><span>座號：______</span><span>姓名：______________</span><span>得分：______</span></div>`:`<div class="meta"><span></span></div>`}
-    ${body}<div class="foot">英語錯題精熟練習</div></div>`;
+    ${body}<div class="foot">錯題精熟練習</div></div>`;
 }
 function doPrint(id,v,kind){
   const set=DB.sets.find(s=>s.id===id); closeModal();
