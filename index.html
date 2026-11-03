@@ -141,6 +141,10 @@
     body{background:#fff}
     #printArea{display:block}
   }
+  #pdfStage{position:fixed;left:-12000px;top:0;width:760px;background:#fff;z-index:-1}
+  .busy{display:flex;flex-direction:column;align-items:center;gap:12px;padding:10px 0}
+  .spin{width:42px;height:42px;border:5px solid #e0e7ff;border-top-color:var(--pri);border-radius:50%;animation:sp 0.9s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
   .pa{color:#000;font-size:12pt;line-height:1.55;font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",-apple-system,sans-serif}
   .pa h1{font-size:17pt;text-align:center;margin:0 0 2pt}
   .pa .sub{text-align:center;font-size:10.5pt;margin-bottom:6pt}
@@ -535,7 +539,7 @@ function renderHome(){
         <div class="setbtns">
           <button class="btn ${p&&p.phase==="done"?"gray":"ok"}" onclick="openSet('${set.id}')">${!p?"開始作答 ›":p.phase==="done"?"查看成績":"繼續 ›"}</button>
           <button class="btn gray sm" onclick="shareSet('${set.id}')">📲 傳到平板</button>
-          <button class="btn gray sm" onclick="printDialog('${set.id}')">🖨 列印</button>
+          <button class="btn gray sm" onclick="printDialog('${set.id}')">📄 PDF／列印</button>
           <button class="btn red sm" onclick="askDelete('${set.id}')">刪除</button>
         </div>
       </div>`;}).join("")}</div>`;
@@ -1041,11 +1045,72 @@ function restartSet(){ S=freshState(); save(); render(); window.scrollTo(0,0); }
    ===================================================================== */
 function printDialog(id,v){
   v=v||0; const set=DB.sets.find(s=>s.id===id); const hasVar=set.bank.some(b=>b.variants.length>1);
-  modal("🖨 列印紙本",`<p style="margin-top:0">「${esc(set.name)}」共 ${set.bank.length} 題。<br>按下面按鈕會打開列印畫面，可以直接印出來，或在印表機選<b>「另存為 PDF」</b>存成檔案。考卷和答案卷要分開按、各存一次。</p>
+  modal("📄 考卷＋答案卷 PDF",`<p style="margin-top:0">「${esc(set.name)}」共 ${set.bank.length} 題。<br>按一次就會同時做好<b>考卷</b>和<b>答案卷</b>兩個 PDF 檔。</p>
     ${hasVar?`<div class="small" style="font-weight:700;margin-bottom:6px">要印哪一種題目？</div>
     <div class="setbtns"><button class="btn sm ${v===0?"pri":"gray"}" onclick="printDialog('${id}',0)">原題</button><button class="btn sm ${v===1?"pri":"gray"}" onclick="printDialog('${id}',1)">變化題（同觀念新題目）</button></div>
-    <p class="small">${v===1?"變化題適合拿來再練一次，考孩子是不是真的懂了。":"原題就是考卷上錯的那些題目。"}</p>`:""}`,
-    [["列印考卷","pri",`doPrint('${id}',${v},'exam')`],["列印答案卷","ok",`doPrint('${id}',${v},'key')`],["關閉","gray","closeModal()"]]);
+    <p class="small">${v===1?"變化題適合拿來再練一次，考孩子是不是真的懂了。":"原題就是考卷上錯的那些題目。"}</p>`:""}
+    <button class="btn ok big full" style="margin-top:6px" onclick="makePdfs('${id}',${v})">📄 產生考卷＋答案卷 PDF</button>
+    <div class="small" style="margin-top:10px">要直接送印表機：<button class="linkbtn" onclick="doPrint('${id}',${v},'exam')">列印考卷</button>｜<button class="linkbtn" onclick="doPrint('${id}',${v},'key')">列印答案卷</button></div>`,
+    [["關閉","gray","closeModal()"]]);
+}
+/* ---------- 一次產生兩個 PDF ---------- */
+let PDFLIB=null;
+function loadPdfLib(){
+  if(window.html2pdf) return Promise.resolve();
+  if(PDFLIB) return PDFLIB;
+  const srcs=["html2pdf.bundle.min.js","https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.2/dist/html2pdf.bundle.min.js"];
+  PDFLIB=new Promise((res,rej)=>{
+    const tryN=i=>{ if(i>=srcs.length){ PDFLIB=null; return rej(Error("load")); }
+      const s=document.createElement("script"); s.src=srcs[i]; s.onload=()=>window.html2pdf?res():tryN(i+1); s.onerror=()=>{s.remove();tryN(i+1);}; document.head.appendChild(s); };
+    tryN(0);
+  });
+  return PDFLIB;
+}
+async function htmlToPdf(html){
+  window.scrollTo(0,0);
+  return await window.html2pdf().set({
+    margin:[12,12,14,12],
+    image:{type:"jpeg",quality:0.9},
+    html2canvas:{scale:2,useCORS:true,backgroundColor:"#ffffff",scrollX:0,scrollY:0},
+    jsPDF:{unit:"mm",format:"a4",orientation:"portrait"},
+    pagebreak:{mode:["css","legacy"],avoid:[".q","h2",".psg"]}
+  }).from(`<div style="background:#fff">${html}</div>`,"string").outputPdf("blob");
+}
+let PDFS=[];
+function safeName(s){ return s.replace(/[\\/:*?"<>|]/g,"").trim(); }
+async function makePdfs(id,v){
+  const set=DB.sets.find(s=>s.id===id);
+  modal("📄 正在產生 PDF…",`<div class="busy"><div class="spin"></div><div id="pdfProg">準備中…</div><div class="small">題目多的話大約需要 10～30 秒，請不要關閉網頁。</div></div>`,[]);
+  const prog=t=>{ const e=document.getElementById("pdfProg"); if(e) e.textContent=t; };
+  try{
+    await loadPdfLib();
+    prog("製作考卷中…（1 / 2）");
+    const exam=await htmlToPdf(buildPrint(set,v,"exam"));
+    prog("製作答案卷中…（2 / 2）");
+    const key=await htmlToPdf(buildPrint(set,v,"key"));
+    const base=safeName(set.name)+(v===1?"_變化題":"");
+    PDFS=[new File([exam],base+"_考卷.pdf",{type:"application/pdf"}), new File([key],base+"_答案卷.pdf",{type:"application/pdf"})];
+    const canShare = !!(navigator.canShare && navigator.canShare({files:PDFS})) && /Android|iPhone|iPad|Mobi/i.test(navigator.userAgent+(navigator.maxTouchPoints>1?" iPad":""));
+    if(!canShare) downloadPdfs();
+    modal("✓ PDF 做好了！",`<p style="margin-top:0">${canShare?"按下面的按鈕，選<b>「儲存到檔案」</b>就能一次存好兩個檔案，也可以直接傳到 LINE。":"兩個檔案已經下載到電腦的<b>「下載」</b>資料夾。<br>如果瀏覽器問「要允許下載多個檔案嗎？」，請按<b>允許</b>。"}</p>
+      <div class="small">📄 ${esc(PDFS[0].name)}（${Math.ceil(PDFS[0].size/1024)} KB）<br>📄 ${esc(PDFS[1].name)}（${Math.ceil(PDFS[1].size/1024)} KB）</div>
+      ${canShare?`<button class="btn ok big full" style="margin-top:12px" onclick="sharePdfs()">📤 儲存／分享 2 個檔案</button>`:""}
+      <div class="setbtns" style="margin-top:10px"><button class="btn gray sm" onclick="downloadPdf(0)">⬇ 再下載考卷</button><button class="btn gray sm" onclick="downloadPdf(1)">⬇ 再下載答案卷</button></div>`,
+      [["完成","pri","closeModal()"]]);
+  }catch(e){
+    modal("PDF 產生失敗",`可能是網路不穩（第一次產生 PDF 需要連網）。請再試一次，或改用「直接列印」，在列印畫面選「另存為 PDF」。`,
+      [["改用列印","gray",`closeModal();printDialog('${id}',${v})`],["再試一次","pri",`makePdfs('${id}',${v})`]]);
+  }
+}
+function downloadPdf(i){
+  const f=PDFS[i]; if(!f) return; const u=URL.createObjectURL(f);
+  const a=document.createElement("a"); a.href=u; a.download=f.name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(u),60000);
+}
+function downloadPdfs(){ downloadPdf(0); setTimeout(()=>downloadPdf(1),700); }
+async function sharePdfs(){
+  try{ await navigator.share({files:PDFS, title:"考卷與答案卷"}); }
+  catch(e){ if(e && e.name!=="AbortError") { downloadPdfs(); toast("改用下載的方式儲存"); } }
 }
 function pCtx(vv){
   let h="";
