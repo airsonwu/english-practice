@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>英語錯題精熟練習</title>
+<style>
+  :root{
+    --bg:#f3f5f9; --card:#fff; --ink:#1e293b; --sub:#64748b; --line:#e2e8f0;
+    --pri:#4f46e5; --pri-soft:#eef2ff; --ok:#059669; --ok-soft:#ecfdf5; --bad:#e11d48; --bad-soft:#fff1f2;
+    --warn:#b45309; --warn-soft:#fffbeb; --sky-soft:#f0f9ff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--bg);color:var(--ink);font-size:18px;line-height:1.55;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+  button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.95);border-bottom:1px solid var(--line);padding:10px 16px}
+  .hwrap{max-width:860px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .logo{display:flex;align-items:center;gap:10px;min-width:0}
+  .logo .ic{flex:0 0 40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#6366f1,#38bdf8);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800}
+  .logo h1{font-size:18px;margin:0;line-height:1.2}
+  .logo p{font-size:13px;margin:0;color:var(--pri);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .hbtns{display:flex;gap:6px}
+  .iconbtn{min-width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:#f8fafc;font-size:18px;padding:0 10px}
+  main{max-width:860px;margin:0 auto;padding:16px 16px 40px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 4px 14px rgba(15,23,42,.05)}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .tag{display:inline-block;padding:4px 12px;border-radius:999px;background:var(--pri-soft);color:var(--pri);font-size:14px;font-weight:700}
+  .tag.red{background:var(--bad-soft);color:var(--bad)}
+  .tag.amber{background:var(--warn-soft);color:var(--warn)}
+  .tag.green{background:var(--ok-soft);color:var(--ok)}
+  .small{font-size:14px;color:var(--sub)}
+  .prompt{font-weight:800;font-size:20px;margin:14px 0 10px}
+  .passage{background:var(--warn-soft);border-left:5px solid #f59e0b;border-radius:0 14px 14px 0;padding:12px 16px;white-space:pre-line;margin-bottom:12px}
+  .dialogue{background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin-bottom:12px}
+  .dialogue div{display:flex;gap:10px;align-items:flex-start;margin:4px 0;font-size:20px}
+  .spk{flex:0 0 auto;min-width:28px;height:28px;padding:0 6px;border-radius:14px;background:var(--pri-soft);color:var(--pri);font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;margin-top:2px}
+  .sentence{background:var(--pri-soft);border:1px solid #c7d2fe;border-radius:14px;padding:14px 16px;font-size:21px;font-weight:700;color:#1e1b4b;margin-bottom:12px;white-space:pre-line}
+  .sentence u{text-decoration-thickness:3px;text-underline-offset:4px;text-decoration-color:var(--bad)}
+  .blank{display:inline-block;min-width:90px;border-bottom:3px solid #6366f1;margin:0 2px}
+  .opts{display:grid;grid-template-columns:1fr;gap:10px}
+  @media(min-width:640px){.opts.two{grid-template-columns:1fr 1fr}}
+  .opt{display:flex;align-items:center;gap:12px;text-align:left;padding:14px;border:2px solid var(--line);border-radius:16px;background:#fff;min-height:60px;font-size:19px;width:100%}
+  .opt .L{flex:0 0 34px;height:34px;border-radius:10px;background:#f1f5f9;color:var(--sub);font-weight:800;display:flex;align-items:center;justify-content:center;font-size:16px}
+  .opt.sel{border-color:var(--pri);background:var(--pri-soft);font-weight:700}
+  .opt.sel .L{background:var(--pri);color:#fff}
+  .opt.right{border-color:var(--ok);background:var(--ok-soft)}
+  .opt.right .L{background:var(--ok);color:#fff}
+  .opt.wrongpick{border-color:var(--bad);background:var(--bad-soft)}
+  .opt.wrongpick .L{background:var(--bad);color:#fff}
+  input.txt,textarea.txt{width:100%;padding:14px 16px;font-size:22px;font-weight:700;border:2px solid var(--line);border-radius:16px;outline:none;background:#fff;font-family:inherit}
+  textarea.txt{font-size:15px;font-weight:500;min-height:160px;resize:vertical}
+  input.txt:focus,textarea.txt:focus{border-color:var(--pri);box-shadow:0 0 0 4px #e0e7ff}
+  .partlabel{font-weight:800;color:var(--pri);margin:12px 0 6px}
+  .tray{min-height:62px;border:2px dashed #a5b4fc;background:#f8faff;border-radius:16px;padding:8px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .bank{border:1px solid var(--line);background:#f8fafc;border-radius:16px;padding:8px;display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+  .chip{padding:10px 14px;border-radius:12px;font-size:19px;font-weight:700;border:1px solid #cbd5e1;background:#fff;min-height:48px}
+  .chip.on{background:var(--pri);color:#fff;border-color:var(--pri)}
+  .chip:active{transform:scale(.95)}
+  .ph{color:#94a3b8;font-size:15px;padding:0 6px}
+  .linkbtn{color:var(--pri);font-weight:700;font-size:15px;padding:6px 4px}
+  .hint{margin-top:10px;background:var(--warn-soft);border:1px solid #fde68a;color:var(--warn);border-radius:12px;padding:8px 12px;font-size:16px}
+  .btn{min-height:52px;padding:0 22px;border-radius:16px;font-weight:800;font-size:18px;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}
+  .btn.pri{background:var(--pri);color:#fff}
+  .btn.ok{background:var(--ok);color:#fff}
+  .btn.gray{background:#f1f5f9;color:#475569}
+  .btn.warn{background:#f59e0b;color:#fff}
+  .btn.red{background:var(--bad-soft);color:var(--bad)}
+  .btn.full{width:100%}
+  .btn.big{min-height:64px;font-size:20px}
+  .btn.sm{min-height:40px;padding:0 14px;font-size:15px;border-radius:12px}
+  .btn:disabled{opacity:.35;pointer-events:none}
+  .btn:active{transform:scale(.97)}
+  .nav{margin-top:20px;padding-top:16px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:10px}
+  .prog{height:10px;background:#e2e8f0;border-radius:999px;overflow:hidden;margin:6px 0 10px}
+  .prog>div{height:100%;background:linear-gradient(90deg,#38bdf8,#4f46e5);transition:width .3s}
+  .dots{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+  .dot{width:34px;height:34px;border-radius:10px;font-size:14px;font-weight:700;background:#fff;border:1.5px solid #cbd5e1;color:var(--sub)}
+  .dot.done{background:#c7d2fe;border-color:#a5b4fc;color:#3730a3}
+  .dot.cur{outline:3px solid var(--pri);outline-offset:1px}
+  .score{width:160px;height:160px;border-radius:50%;margin:0 auto 14px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:6px solid}
+  .score b{font-size:48px;line-height:1}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px;margin:16px 0}
+  .cell{border-radius:12px;padding:6px 0;text-align:center;font-weight:800;border:2px solid}
+  .cell.ok{border-color:#6ee7b7;background:var(--ok-soft);color:var(--ok)}
+  .cell.bad{border-color:#fda4af;background:var(--bad-soft);color:var(--bad)}
+  .cell .m{font-size:22px;line-height:1.1}
+  .cmp{display:grid;grid-template-columns:1fr;gap:8px;margin:10px 0}
+  @media(min-width:640px){.cmp{grid-template-columns:1fr 1fr}}
+  .cmp>div{border-radius:12px;padding:10px 12px;border:1px solid}
+  .cmp .you{background:var(--bad-soft);border-color:#fecdd3}
+  .cmp .ans{background:var(--ok-soft);border-color:#a7f3d0}
+  .cmp .lab{font-size:13px;font-weight:800}
+  .cmp .you .lab{color:var(--bad)} .cmp .ans .lab{color:var(--ok)}
+  .cmp .val{font-weight:800;font-size:19px;word-break:break-word}
+  .explain{background:var(--sky-soft);border:1px solid #bae6fd;border-radius:12px;padding:12px 14px;margin-top:8px}
+  .explain h4{margin:0 0 4px;color:#075985;font-size:16px}
+  .note{background:var(--warn-soft);border:1px solid #fde68a;border-radius:12px;padding:8px 12px;color:var(--warn);font-size:15px;margin-top:8px}
+  .err{background:var(--bad-soft);border:1px solid #fecdd3;border-radius:12px;padding:10px 12px;color:var(--bad);font-size:15px;margin-top:10px}
+  .banner{background:linear-gradient(90deg,#f59e0b,#f97316);color:#fff;border-radius:22px;padding:18px 22px;margin-bottom:16px}
+  .banner h2{margin:4px 0;font-size:22px}
+  .stack>*+*{margin-top:14px}
+  .tree{background:#fff;border:1px solid #bae6fd;border-radius:12px;padding:10px;margin-top:8px;font-size:15px}
+  .tree .gp{text-align:center;font-weight:800;color:var(--pri);border-bottom:1px solid var(--line);padding-bottom:6px}
+  .tree .kids{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+  .tree .kids div{background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:6px;text-align:center}
+  .sticky-bottom{position:sticky;bottom:12px;display:flex;justify-content:center;margin-top:16px}
+  .modal-bg{position:fixed;inset:0;background:rgba(15,23,42,.45);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px}
+  .modal{background:#fff;border-radius:20px;padding:22px;max-width:440px;width:100%;max-height:90vh;overflow:auto}
+  .modal h3{margin:0 0 8px}
+  .modal .acts{display:flex;gap:10px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+  .conf{position:fixed;top:-20px;width:10px;height:16px;z-index:60;pointer-events:none;animation:fall linear forwards}
+  @keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+  .sbtn{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:12px;background:#f1f5f9;font-size:15px;font-weight:700;color:#334155}
+  /* 首頁與引導 */
+  .setcard{display:flex;flex-direction:column;gap:10px}
+  .setcard h3{margin:0;font-size:19px}
+  .setbtns{display:flex;gap:8px;flex-wrap:wrap}
+  .steps{display:flex;gap:6px;margin-bottom:14px}
+  .steps div{flex:1;height:8px;border-radius:999px;background:#e2e8f0}
+  .steps div.on{background:var(--pri)}
+  .stepno{display:inline-flex;width:34px;height:34px;border-radius:50%;background:var(--pri);color:#fff;font-weight:800;align-items:center;justify-content:center;margin-right:8px}
+  .wiz h2{display:flex;align-items:center;margin:0 0 12px;font-size:22px}
+  .tips{margin:0;padding-left:22px}
+  .tips li{margin:6px 0}
+  .big-ico{font-size:44px;text-align:center;margin:4px 0 10px}
+  .pv{border:1px solid var(--line);border-radius:16px;padding:14px;background:#fff}
+  .pv.unsure{border:2px solid #f59e0b;background:#fffdf5}
+  .pv .ctx{font-size:16px;background:#f8fafc;border-radius:10px;padding:8px 10px;margin:6px 0;white-space:pre-line}
+  .pv .opt{min-height:46px;padding:8px 10px;font-size:16px}
+  .pv input.txt{font-size:17px;padding:10px 12px}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1e293b;color:#fff;padding:12px 18px;border-radius:14px;z-index:70;font-size:16px;max-width:90vw}
+
+  /* ===== 列印 ===== */
+  #printArea{display:none}
+  @page{size:A4;margin:14mm 14mm 16mm}
+  @media print{
+    header,main,#modalRoot,.toast,.conf{display:none!important}
+    body{background:#fff}
+    #printArea{display:block}
+  }
+  .pa{color:#000;font-size:12pt;line-height:1.55;font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",-apple-system,sans-serif}
+  .pa h1{font-size:17pt;text-align:center;margin:0 0 2pt}
+  .pa .sub{text-align:center;font-size:10.5pt;margin-bottom:6pt}
+  .pa .meta{display:flex;justify-content:space-between;gap:10pt;font-size:11pt;border-bottom:1.5pt solid #000;padding:4pt 0 5pt;margin-bottom:6pt}
+  .pa h2{font-size:12.5pt;margin:12pt 0 5pt;border-left:4pt solid #000;padding-left:6pt;break-after:avoid}
+  .pa .q{break-inside:avoid;margin:0 0 10pt}
+  .pa .qh{display:flex;gap:4pt}
+  .pa .qh .no{flex:0 0 auto;white-space:nowrap}
+  .pa .body{padding-left:24pt}
+  .pa .psg{border:1pt solid #555;border-radius:4pt;padding:5pt 8pt;margin:4pt 0;white-space:pre-line;font-size:11pt}
+  .pa .dlg div{margin:1pt 0}
+  .pa .sen{margin:3pt 0;white-space:pre-line}
+  .pa .sen u{text-decoration-thickness:1.2pt;text-underline-offset:2pt}
+  .pa .ops{display:flex;flex-wrap:wrap;gap:2pt 22pt;margin-top:2pt}
+  .pa .ops.col{display:block}
+  .pa .line{border-bottom:1pt solid #000;height:24pt;margin-top:2pt}
+  .pa .blank{display:inline-block;min-width:80pt;border-bottom:1pt solid #000;margin:0 2pt}
+  .pa .ans{font-weight:700}
+  .pa .ref{font-size:9.5pt;color:#555}
+  .pa .exp{font-size:10pt;color:#222;margin-top:2pt}
+  .pa .foot{margin-top:14pt;font-size:9pt;color:#666;text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <div class="hwrap">
+    <div class="logo">
+      <div class="ic">EN</div>
+      <div style="min-width:0"><h1>英語錯題精熟練習</h1><p id="phaseLabel"></p></div>
+    </div>
+    <div class="hbtns">
+      <button class="iconbtn" id="homeBtn" onclick="goHome()" aria-label="回考卷列表">🏠</button>
+      <button class="iconbtn" id="soundBtn" onclick="toggleSound()" aria-label="音效開關">🔊</button>
+    </div>
+  </div>
+</header>
+<main id="app"></main>
+<div id="modalRoot"></div>
+<div id="printArea"></div>
+
+<script>
+/* =====================================================================
+   設定：建好 Gemini Gem 之後，把分享連結貼在下面引號裡。
+   留空的話，網頁會改用「複製指令 → 貼到 Gemini」的方式引導家長。
+   ===================================================================== */
+const GEM_URL = "https://gemini.google.com/gem/1mSmH73XweN1kNRD-sL3crKpajRgk_LHc?usp=sharing";
+const GEMINI_URL = "https://gemini.google.com/app";
+const PROMPT = "你是「英語考卷錯題整理小幫手」。使用者會上傳學生英語考卷的照片或 PDF 檔，請照下面規則整理。\n\n【要做的事】\n1. 考卷上有老師批改痕跡時：只挑出被批改為「錯」的題目（紅筆打叉、扣分、圈起來、有訂正的題目），答對的不要列出來。\n   考卷沒有批改痕跡時（空白題目卷、題庫、之前印出來的錯題重練卷）：把全部題目都整理出來。\n2. 每一題寫出正確答案。正確答案的依據順序：答案卷或答案頁 → 老師寫的訂正 → 你自己判斷。你沒有把握的題目，\"sure\" 要設成 false。\n3. 每一題寫一句簡短的中文解說（why）和一句觀念重點（tip），寫給國中生看，簡單好懂。\n4. 每一題再出一題「同觀念、換內容」的變化題（var），難度和原題一樣。\n5. 題目有圖片時（例如看圖選答案），把圖片內容改成文字寫進題目或選項裡。\n\n【輸出規則（非常重要）】\n- 只輸出一個 ```json 程式碼框，程式碼框前後不要有任何其他文字。\n- 一定要照下面的格式。\n- 照片模糊、看不清楚時不要猜，只回覆一句：「這張照片看不清楚，請重拍（考卷攤平、光線充足、正面拍）」。\n- 這一頁沒有錯題時，輸出 {\"q\":[]}。\n- 使用者之後在同一個對話上傳下一頁時，同樣只輸出那一頁的題目。\n\n【PDF 或一次上傳多頁時】\n- 一次最多整理 2 頁，避免輸出太長被截斷。\n- 還有頁面沒整理完時，在 JSON 最外層加上 \"more\":\"還有第 3～5 頁\"。\n- 使用者回覆「繼續」時，接著整理下 2 頁。全部整理完的那一次，就不要加 \"more\"。\n- 同一個檔案裡如果有答案卷或答案頁，用它來決定正確答案，不要把答案頁本身當成題目。\n\n【格式】\n{\"title\":\"考卷名稱，例如：七年級英語 Unit 1\",\"q\":[ 題目, 題目, … ]}\n\n題目有三種：\n\n1) 選擇題 \"t\":\"c\"\n{\"t\":\"c\",\"sec\":\"二、選擇題\",\"p\":\"選出最適當的答案\",\"dlg\":[[\"A\",\"____ Heather?\"],[\"B\",\"She's Ben's wife.\"]],\"o\":[\"How's\",\"Is she\",\"Who's\",\"Are you\"],\"a\":2,\"why\":\"答句說明她的身分，所以用 Who's 問「她是誰」。\",\"tip\":\"問身分用 Who。\",\"sure\":true,\"var\":{\"dlg\":[[\"A\",\"____ that man?\"],[\"B\",\"He's my uncle.\"]],\"o\":[\"What's\",\"How's\",\"Is he\",\"Who's\"],\"a\":3,\"why\":\"答句說明他的身分，所以用 Who's。\"}}\n- \"a\" 是正確選項的位置，從 0 開始算：A=0、B=1、C=2、D=3。\n\n2) 單字填空 \"t\":\"f\"（只填一個單字）\n{\"t\":\"f\",\"sec\":\"一、單字\",\"p\":\"依句意拼寫出正確單字\",\"sent\":\"Irene is fourteen. She is a j____ high school student.\",\"a\":\"junior\",\"hint\":\"j 開頭，「國中」的國。\",\"why\":\"14 歲是國中生，國中是 junior high school。\",\"tip\":\"國中＝junior high school。\",\"sure\":true,\"var\":{\"sent\":\"Tom is thirteen. He is a j____ high school student.\",\"a\":\"junior\",\"hint\":\"j 開頭。\",\"why\":\"13 歲是國中生。\"}}\n\n3) 寫句子 \"t\":\"w\"（句型轉換、中翻英、重組、造句）\n{\"t\":\"w\",\"sec\":\"六、中翻英\",\"p\":\"中翻英\",\"sent\":\"他是我的狗。牠的名字叫洛基（Rocky）。\",\"a\":[\"It's my dog. Its name is Rocky.\",\"It is my dog. Its name is Rocky.\"],\"why\":\"「牠的」是 Its，沒有撇號。\",\"tip\":\"Its＝牠的；It's＝It is。\",\"sure\":true,\"var\":{\"sent\":\"這是我的貓。牠的名字叫咪咪（Mimi）。\",\"a\":[\"This is my cat. Its name is Mimi.\"],\"why\":\"「牠的」是 Its。\"}}\n- \"a\" 列出所有可以接受的寫法，最標準的放第一個。\n- 要寫 A、B 兩句對話時，不用 \"a\"，改用 \"parts\":[{\"label\":\"A\",\"a\":[\"…\"]},{\"label\":\"B\",\"a\":[\"…\"]}]。\n\n【共用欄位】\n- \"passage\"：閱讀測驗文章或克漏字短文，要完整抄下來，不要刪減。\n- \"dlg\"：對話，格式是 [[\"說話的人\",\"內容\"], …]。\n- \"sent\"：題目句子。空格寫成 ____。「依畫線部分」的畫線文字用 [[ ]] 包起來，例如 His name is [[Lucas]].\n- 閱讀題的變化題可以用同一篇文章、只換問題，var 裡面就不用再寫 passage。\n- 英文的撇號一律用一般的 ' 。\n";
+
+/* ===================== 範例考卷（第一份考卷） ===================== */
+const SAMPLE_BANK = [
+  // ---------- 一、單字 ----------
+  { id:"A1", sec:"一、大小寫與單字", concept:"大小寫互換：全大寫的字要整個改成小寫，一個字母都不能漏。",
+    variants:[
+      { type:"fill", prompt:"將單字做大小寫互換：", sentence:"BOARD ➔ ____", answers:["board"], hint:"把每個字母都改成小寫。", why:"BOARD 全部改成小寫就是 board。" },
+      { type:"fill", prompt:"將單字做大小寫互換：", sentence:"KITCHEN ➔ ____", answers:["kitchen"], hint:"把每個字母都改成小寫。", why:"KITCHEN 全部改成小寫就是 kitchen。" }
+    ]},
+  { id:"A2", sec:"一、大小寫與單字", concept:"enough（足夠地）放在形容詞後面：big enough＝夠大。拼法 e-n-o-u-g-h。",
+    variants:[
+      { type:"fill", prompt:"依句意拼寫出正確單字：", sentence:"The car is small. It's not big <b>e</b>____ for a family of four.", answers:["enough"], hint:"e 開頭，意思是「足夠地」。", why:"車子很小，對四口之家來說「不夠大」＝not big enough。" },
+      { type:"fill", prompt:"依句意拼寫出正確單字：", sentence:"The room is small. It's not big <b>e</b>____ for five people.", answers:["enough"], hint:"e 開頭，意思是「足夠地」。", why:"房間很小，五個人住「不夠大」＝not big enough。" }
+    ]},
+  { id:"A3", sec:"一、大小寫與單字", concept:"國中＝junior high school，拼法 j-u-n-i-o-r。",
+    variants:[
+      { type:"fill", prompt:"依句意拼寫出正確單字：", sentence:"Irene is fourteen years old. She is a <b>j</b>____ high school student.", answers:["junior"], hint:"j 開頭；「國中」＝ ____ high school。", why:"14 歲是國中生，國中＝junior high school。" },
+      { type:"fill", prompt:"依句意拼寫出正確單字：", sentence:"Tom is thirteen. He is a <b>j</b>____ high school student.", answers:["junior"], hint:"j 開頭；「國中」＝ ____ high school。", why:"13 歲是國中生，國中＝junior high school。" }
+    ]},
+  { id:"A4", sec:"一、大小寫與單字", concept:"國小＝elementary school，拼法 e-l-e-m-e-n-t-a-r-y（倒數第三個字母是 a，常被漏掉）。",
+    variants:[
+      { type:"fill", prompt:"依句意拼寫出正確單字：", sentence:"My brother is eight. He is an <b>e</b>____ school student.", answers:["elementary"], hint:"e 開頭；「國小」＝ ____ school。小心拼字。", why:"8 歲是小學生＝elementary school student。" },
+      { type:"fill", prompt:"依句意拼寫出正確單字：", sentence:"My sister is nine. She is an <b>e</b>____ school student.", answers:["elementary"], hint:"e 開頭；「國小」＝ ____ school。小心拼字。", why:"9 歲是小學生＝elementary school student。" }
+    ]},
+  { id:"A5", sec:"一、大小寫與單字", concept:"person＝人（單數），拼法 p-e-r-s-o-n。a good person＝好人。",
+    variants:[
+      { type:"fill", prompt:"依句意拼寫出正確單字：", sentence:"George is a good <b>p</b>____; he is very nice.", answers:["person"], hint:"p 開頭，意思是「人」。", why:"他人很好＝a good person。" },
+      { type:"fill", prompt:"依句意拼寫出正確單字：", sentence:"Mr. Lin is a kind <b>p</b>____. Everyone likes him.", answers:["person"], hint:"p 開頭，意思是「人」。", why:"林先生是個親切的人＝a kind person。" }
+    ]},
+
+  // ---------- 二、單題選擇 ----------
+  { id:"B1", sec:"二、單題選擇", concept:"看答句的代名詞反推問句主詞：答句用 she → 問的是女生；用 he → 問的是男生。",
+    variants:[
+      { type:"choice", prompt:"選出最適當的答案：", dialogue:[["A","____ Scott's cousin?"],["B","No, she's not."]], options:["Who is","Are you","Is Mr. Smith","Is Miss Smith"], answer:3, why:"答句是 she → 主詞是女生，Miss Smith（史密斯小姐）。(A) Who is 不能用 No 回答；(B) 要用 I 回答。" },
+      { type:"choice", prompt:"選出最適當的答案：", dialogue:[["A","____ your teacher?"],["B","Yes, he is."]], options:["Who is","Is Mrs. Wang","Is Mr. Wang","Are they"], answer:2, why:"答句是 he → 主詞是男生，Mr. Wang（王先生）。Mrs. 是女生；Who 不能用 Yes 回答。" }
+    ]},
+  { id:"B2", sec:"二、單題選擇", concept:"回答「身分／關係」（某人的太太、叔叔…）時，問句用 Who's（＝Who is）。",
+    variants:[
+      { type:"choice", prompt:"選出最適當的答案：", dialogue:[["A","____ Heather?"],["B","She's Ben's wife."]], options:["How's","Is she","Who's","Are you"], answer:2, why:"答句說她是 Ben 的太太（身分），所以問「Heather 是誰？」＝Who's Heather?" },
+      { type:"choice", prompt:"選出最適當的答案：", dialogue:[["A","____ that man?"],["B","He's my uncle."]], options:["How's","What's","Who's","Is he"], answer:2, why:"答句說他是我的叔叔（身分），所以問「那個男人是誰？」＝Who's that man?" }
+    ]},
+  { id:"B3", sec:"二、單題選擇", concept:"簡答加強語氣：It really is.（really 放在 be 動詞前面）。",
+    variants:[
+      { type:"choice", prompt:"選出最適當的答案：", dialogue:[["A","Isn't this picture beautiful?"],["B","Yes. It ____."]], options:["isn't","really","is really","really is"], answer:3, why:"Yes 後面要肯定，簡答加強語氣寫成 It really is.（really 在 is 前面）。" },
+      { type:"choice", prompt:"選出最適當的答案：", dialogue:[["A","Isn't your cat cute?"],["B","Yes. It ____."]], options:["is really","really is","isn't","really"], answer:1, why:"簡答加強語氣寫成 It really is.，really 要放在 is 前面。" }
+    ]},
+  { id:"B4", sec:"二、單題選擇", concept:"above＝在…的上方（沒有碰到）；on＝在…上面（有碰到）。",
+    variants:[
+      { type:"choice", prompt:"選出最適當的答案：", dialogue:[["A","Where's my bird, Kiki?"],["B","Look up! It's right ____ you."]], options:["to","on","of","above"], answer:3, why:"Look up!（往上看）→ 鳥在你的正上方，沒碰到你，用 above。" },
+      { type:"choice", prompt:"選出最適當的答案：", dialogue:[["A","Where's the lamp?"],["B","Look up! It's right ____ the table."]], options:["on","above","of","to"], answer:1, why:"Look up!（往上看）→ 燈在桌子上方的天花板，沒碰到桌子，用 above。" }
+    ]},
+  { id:"B5", sec:"二、單題選擇", concept:"but 連接意思相反的形容詞：old but good（舊但很好）。",
+    variants:[
+      { type:"choice", prompt:"選出最適當的答案：", sentence:"The watch is old ____. It's my father's watch.", options:["blue","special","but good","and young"], answer:2, why:"手錶「舊」但「很好」，前後意思相反用 but → old but good。手錶不能說 young。" },
+      { type:"choice", prompt:"選出最適當的答案：", sentence:"My bike is old ____. I still like it.", options:["and new","but nice","red blue","special"], answer:1, why:"腳踏車「舊」但「很好」，前後意思相反用 but → old but nice。old and new 自相矛盾。" }
+    ]},
+  { id:"B6", sec:"二、單題選擇", concept:"問名字用 What's；回答時女生用 Her name，男生用 His name。",
+    variants:[
+      { type:"choice", prompt:"選出最適當的答案：", dialogue:[["A","____ Frank's sister's name?"],["B","____ name's Emily."]], options:["Who's; Her","What's; Her","What's; His","Who's; He's"], answer:1, why:"問名字用 What's；Frank 的姊妹是女生 → Her name。" },
+      { type:"choice", prompt:"選出最適當的答案：", dialogue:[["A","____ your brother's name?"],["B","____ name's Leo."]], options:["Who's; His","What's; Her","What's; His","Who's; He's"], answer:2, why:"問名字用 What's；brother 是男生 → His name。" }
+    ]},
+  { id:"B7", sec:"二、單題選擇", concept:"next to each other＝在彼此旁邊（固定用法）。between 要接 A and B。",
+    variants:[
+      { type:"choice", prompt:"選出最適當的答案：", sentence:"This is a picture of my family. In the picture, we are ____ each other.", options:["next to","above","between","inside"], answer:0, why:"「在彼此旁邊」＝next to each other。" },
+      { type:"choice", prompt:"選出最適當的答案：", sentence:"Look at the two cats. They are ____ each other on the sofa.", options:["between","inside","next to","above"], answer:2, why:"「在彼此旁邊」＝next to each other。" }
+    ]},
+  { id:"B8", sec:"二、單題選擇", concept:"三個形容詞並列寫成「A, B, and C」。but 只用在前後意思相反時。",
+    variants:[
+      { type:"choice", prompt:"選出最適當的答案：", dialogue:[["A","Wow! Your new house is big, ____."],["B","Thank you."]], options:["old and sad","new, beautiful","new but beautiful","new, and beautiful"], answer:3, why:"big、new、beautiful 三個都是優點，並列寫成 big, new, and beautiful。(C) 的 but 表示相反，「新」和「漂亮」不相反；(B) 少了 and。" },
+      { type:"choice", prompt:"選出最適當的答案：", dialogue:[["A","Your dog is cute, ____."],["B","Thanks!"]], options:["big but nice","big, nice","old and sad","big, and nice"], answer:3, why:"cute、big、nice 三個並列，寫成 cute, big, and nice。but 表示相反，這裡不相反；(B) 少了 and。" }
+    ]},
+  { id:"B9", sec:"二、單題選擇", concept:"共同擁有：'s 只加在最後一個人（Troy and Helen's son）；各自擁有才兩個都加 's。",
+    variants:[
+      { type:"choice", prompt:"選出最適當的答案：", dialogue:[["A","Who's that boy?"],["B","He is ____ son."]], options:["Troy and Helen's","Troy's and Helen's","Troy's and Helen","Troy and Helen"], answer:0, why:"兒子是 Troy 和 Helen 兩人共同的 → 's 只加在最後：Troy and Helen's son。" },
+      { type:"choice", prompt:"選出最適當的答案：", dialogue:[["A","Who's that girl?"],["B","She is ____ daughter."]], options:["Sam's and Amy","Sam and Amy","Sam and Amy's","Sam's and Amy's"], answer:2, why:"女兒是 Sam 和 Amy 兩人共同的 → 's 只加在最後：Sam and Amy's daughter。" }
+    ]},
+  { id:"B10", sec:"二、單題選擇", concept:"答句回答「是什麼人」→ 問句用 Who。",
+    variants:[
+      { type:"choice", prompt:"選出最適當的問句：", dialogue:[["A","____"],["B","That is my teacher."]], options:["Who is she?","What is that?","Are they writers?","Is she a good teacher?"], answer:0, why:"答句在介紹這個人是誰（我的老師），問句用 Who is she?" },
+      { type:"choice", prompt:"選出最適當的問句：", dialogue:[["A","____"],["B","He is my cousin."]], options:["How is he?","Who is he?","Is she your cousin?","What is that?"], answer:1, why:"答句在介紹這個人是誰（我的表哥），問句用 Who is he?" }
+    ]},
+
+  // ---------- 三、對話 ----------
+  { id:"C1", sec:"三、對話選擇", concept:"對方回 Nice to meet you, too. → 前一句一定是 Nice to meet you.",
+    variants:[
+      { type:"choice", prompt:"選出最適當的答案：", dialogue:[["A","Hi, I'm Gale. ____"],["B","I am Debbie. Nice to meet you, too."]], options:["I am an office worker.","How are you?","Nice to meet you.","Who are you?"], answer:2, why:"B 說 Nice to meet you, too.（我也很高興認識你），所以 A 先說了 Nice to meet you." },
+      { type:"choice", prompt:"選出最適當的答案：", dialogue:[["A","Hello, I'm Tina. ____"],["B","Hi, Tina. I'm Paul. Nice to meet you, too."]], options:["How are you?","Nice to meet you.","Who are you?","I am a student."], answer:1, why:"B 說 Nice to meet you, too.，所以 A 先說了 Nice to meet you." }
+    ]},
+  { id:"C2", sec:"三、對話選擇", concept:"答句介紹某人是誰 → 問句用 Who is that girl/boy?",
+    variants:[
+      { type:"choice", prompt:"選出最適當的答案：", dialogue:[["A","____"],["B","That's Meg, Brian's sister."]], options:["How is she?","Who is that girl?","Nice to meet you, Meg.","Are they Brian and his sister?"], answer:1, why:"答句介紹「那是 Meg」，問的是「那女孩是誰？」＝Who is that girl?" },
+      { type:"choice", prompt:"選出最適當的答案：", dialogue:[["A","____"],["B","That's Jack, my best friend."]], options:["How is he?","Nice to meet you, Jack.","Who is that boy?","Is she your friend?"], answer:2, why:"答句介紹「那是 Jack」，問的是「那男孩是誰？」＝Who is that boy?" }
+    ]},
+  { id:"C3", sec:"三、對話選擇", concept:"別人對你說 Nice to meet you. → 禮貌回應 Nice to meet you, too.",
+    variants:[
+      { type:"choice", prompt:"選出第 ( 3 ) 空格最適當的回答：", passage:"Jacob: Welcome, Patrick! Come ( 1 ) my parents. Mom and Dad, ( 2 ) Patrick.\nPatrick: Nice to meet you, Mr. and Mrs. Davis.\nJacob's dad: ( 3 )", options:["Thank you.","I see.","We are fine.","Nice to meet you, too."], answer:3, why:"Patrick 說 Nice to meet you，爸爸要回 Nice to meet you, too." },
+      { type:"choice", prompt:"選出空格最適當的回答：", passage:"Amy: Mom, this is my friend, Jenny.\nJenny: Nice to meet you, Mrs. Chen.\nAmy's mom: ____", options:["I see.","Nice to meet you, too.","Thank you.","We are fine."], answer:1, why:"Jenny 說 Nice to meet you，媽媽要回 Nice to meet you, too." }
+    ]},
+
+  // ---------- 四、閱讀 ----------
+  { id:"D1", sec:"四、閱讀理解", concept:"家族樹：先找「誰是誰的子女」，再找「誰跟誰是夫妻」，最後找「夫妻的孩子」。",
+    variants:[
+      { type:"choice", prompt:"Which family tree is correct?（哪一個家族關係是正確的？）",
+        passage:"Look at this family tree. This is the Hill family. Kevin and Rachel are Mr. and Mrs. Hill's son and daughter. Kevin and Amanda are husband and wife. Fred is their son. Rachel's husband is Zack. They are mother and father to Ray and Sharon.\nKevin is a baseball coach at Apple Elementary School. Ray and Sharon are on Kevin's baseball team, and Fred is, too.",
+        options:["Hill 夫婦的子女：Kevin、Rachel｜Kevin＋Amanda → Fred｜Rachel＋Zack → Ray、Sharon",
+                 "Hill 夫婦的子女：Kevin、Rachel｜Kevin＋Amanda → Ray、Sharon｜Rachel＋Zack → Fred",
+                 "Hill 夫婦的子女：Kevin、Amanda｜Kevin＋Rachel → Fred｜Amanda＋Zack → Ray、Sharon",
+                 "Hill 夫婦的子女：Kevin、Zack｜Kevin＋Amanda → Fred｜Zack＋Rachel → Ray、Sharon"],
+        answer:0, tree:{gp:"Mr. & Mrs. Hill", kids:[["Kevin ＋ Amanda","兒子：Fred"],["Rachel ＋ Zack","子女：Ray、Sharon"]]},
+        why:"Kevin、Rachel 是 Hill 夫婦的兒子和女兒；Kevin 的太太是 Amanda，兒子 Fred；Rachel 的先生是 Zack，孩子是 Ray 和 Sharon。" },
+      { type:"choice", prompt:"Which family tree is correct?（哪一個家族關係是正確的？）",
+        passage:"This is the Lin family. Mark and Lucy are Mr. and Mrs. Lin's son and daughter. Mark's wife is Kelly. Joy is their daughter. Lucy and Tom are husband and wife. Ben and Leo are their sons.",
+        options:["Lin 夫婦的子女：Mark、Kelly｜Mark＋Lucy → Joy｜Kelly＋Tom → Ben、Leo",
+                 "Lin 夫婦的子女：Mark、Lucy｜Mark＋Kelly → Ben、Leo｜Lucy＋Tom → Joy",
+                 "Lin 夫婦的子女：Mark、Lucy｜Mark＋Kelly → Joy｜Lucy＋Tom → Ben、Leo",
+                 "Lin 夫婦的子女：Mark、Tom｜Mark＋Kelly → Joy｜Tom＋Lucy → Ben、Leo"],
+        answer:2, tree:{gp:"Mr. & Mrs. Lin", kids:[["Mark ＋ Kelly","女兒：Joy"],["Lucy ＋ Tom","兒子：Ben、Leo"]]},
+        why:"Mark、Lucy 是 Lin 夫婦的子女；Mark 的太太 Kelly，女兒 Joy；Lucy 的先生 Tom，兒子 Ben 和 Leo。" }
+    ]},
+  { id:"D2", sec:"四、閱讀理解", concept:"填空題要看「空格後面那句」：後面在糾正對方 → 前面要先說 No。",
+    variants:[
+      { type:"choice", prompt:"Which is good for the blank?（哪一句適合填入空格？）",
+        passage:"Lynn: Wow! Your bedroom is big and blue. It is beautiful.\nRick: Thanks. This is my bed, and my brother's bed is next to the desk.\nLynn: Hey, what's the yellow and black thing on the desk? Is it a toy car?\nRick: ______ It is Bumblebee, my new pencil case.\nLynn: That's very special. And what's that on your brother's bed?\nRick: The green box? It's my brother's cookie box. Cookies are his favorite snack.",
+        options:["Yes, it's on the desk.","Yes. It's my favorite.","No, it's not a toy car.","No. It's not yellow and black."], answer:2,
+        why:"Rick 接著說「它是我的新鉛筆盒」，表示不是玩具車 → No, it's not a toy car.（它確實是黃黑色，所以 D 錯）" },
+      { type:"choice", prompt:"Which is good for the blank?（哪一句適合填入空格？）",
+        passage:"Amy: What's that red thing on your bed? Is it a hat?\nBen: ______ It's my new bag.",
+        options:["Yes, it's on the bed.","No. It's not red.","Yes. It's my favorite.","No, it's not a hat."], answer:3,
+        why:"Ben 接著說「它是我的新包包」，表示不是帽子 → No, it's not a hat." }
+    ]},
+  { id:"D3", sec:"四、閱讀理解", concept:"判斷 true／false 要回原文逐一核對，每個選項都要找到證據。",
+    variants:[
+      { type:"choice", prompt:"Which is true?（哪一個是正確的？）",
+        passage:"Lynn: Wow! Your bedroom is big and blue. It is beautiful.\nRick: Thanks. This is my bed, and my brother's bed is next to the desk.\nLynn: Hey, what's the yellow and black thing on the desk? Is it a toy car?\nRick: ______ It is Bumblebee, my new pencil case.\nLynn: That's very special. And what's that on your brother's bed?\nRick: The green box? It's my brother's cookie box. Cookies are his favorite snack.",
+        options:["Rick's bedroom is green.","Rick's toy car is on the desk.","The desk is next to Rick's bed.","Rick's bedroom is his brother's bedroom too."], answer:3,
+        why:"房間裡有 Rick 的床和弟弟的床 → 兩人共用房間。(A) 房間是藍色；(B) 桌上是鉛筆盒；(C) 書桌旁邊是弟弟的床。" },
+      { type:"choice", prompt:"Where is Rick's brother's bed?（Rick 弟弟的床在哪裡？）",
+        passage:"Lynn: Wow! Your bedroom is big and blue. It is beautiful.\nRick: Thanks. This is my bed, and my brother's bed is next to the desk.\nLynn: Hey, what's the yellow and black thing on the desk? Is it a toy car?\nRick: ______ It is Bumblebee, my new pencil case.\nLynn: That's very special. And what's that on your brother's bed?\nRick: The green box? It's my brother's cookie box. Cookies are his favorite snack.",
+        options:["It's next to Rick's bed.","It's on the desk.","It's next to the desk.","It's in the green box."], answer:2,
+        why:"原文：my brother's bed is next to the desk. → 弟弟的床在書桌旁邊。" }
+    ]},
+  { id:"D4", sec:"四、閱讀理解", concept:"細節題：先找到題目問的「人」，再找他後面的數字。",
+    variants:[
+      { type:"choice", prompt:"How old is Anita's brother?",
+        passage:"Hi, my name is Anita. I'm a junior high school student. I'm fourteen years old. My dad is a police officer. He is forty-six years old. My mom is a housewife. She is forty-one years old. My brother, Tony, is a student. He is ten years old. My sister, Lily, is five years old. Justin is my brother and sister's favorite singer. He is handsome. My favorite singer is Richard. He is handsome, too.",
+        options:["He's five.","He's ten.","He's fourteen.","He's forty-one."], answer:1,
+        why:"My brother, Tony, ... He is ten years old. → 弟弟 10 歲。5 歲的是妹妹 Lily。" },
+      { type:"choice", prompt:"How old is Anita's sister?",
+        passage:"Hi, my name is Anita. I'm a junior high school student. I'm fourteen years old. My dad is a police officer. He is forty-six years old. My mom is a housewife. She is forty-one years old. My brother, Tony, is a student. He is ten years old. My sister, Lily, is five years old. Justin is my brother and sister's favorite singer. He is handsome. My favorite singer is Richard. He is handsome, too.",
+        options:["She's ten.","She's forty-one.","She's five.","She's fourteen."], answer:2,
+        why:"My sister, Lily, is five years old. → 妹妹 5 歲。" }
+    ]},
+
+  // ---------- 五、句型轉換 ----------
+  { id:"E1", sec:"五、句型轉換", concept:"依畫線部分造問句：問名字用 What；his／her 要保留原句的，不能改成 your。",
+    variants:[
+      { type:"write", prompt:"依畫線部分造問句：", sentence:"His name is <u>Lucas</u>.", parts:[{answers:["What is his name?"], extra:["your","Who"]}], why:"問名字用 What → What is his name?（也可寫 What's his name?）" },
+      { type:"write", prompt:"依畫線部分造問句：", sentence:"Her name is <u>Emily</u>.", parts:[{answers:["What is her name?"], extra:["your","Who"]}], why:"問名字用 What → What is her name?（也可寫 What's her name?）" }
+    ]},
+  { id:"E2", sec:"五、句型轉換", concept:"詳答＝先簡答（No, he isn't.）再補充正確內容（He is …）。police officer 拼字要注意。",
+    variants:[
+      { type:"write", prompt:"依提示詳答（不，他不是。他是警察。）：", sentence:"Is Ted's father a writer?", parts:[{answers:["No, he isn't. He is a police officer."], extra:["an","Yes,"]}], why:"先否定 No, he isn't.，再說明 He is a police officer.（也可寫 No, he's not.）" },
+      { type:"write", prompt:"依提示詳答（不，她不是。她是老師。）：", sentence:"Is Amy's mother a doctor?", parts:[{answers:["No, she isn't. She is a teacher."], extra:["an","Yes,"]}], why:"先否定 No, she isn't.，再說明 She is a teacher." }
+    ]},
+  { id:"E3", sec:"五、句型轉換", concept:"有 be 動詞的句子改問句：把 is／are 移到句首（大寫），句尾改問號。",
+    variants:[
+      { type:"write", prompt:"改為 Yes / No 問句：", sentence:"Judy's cousin is a housewife.", parts:[{answers:["Is Judy's cousin a housewife?"], extra:["Judy","Are"]}], why:"is 移到句首 → Is Judy's cousin a housewife?" },
+      { type:"write", prompt:"改為 Yes / No 問句：", sentence:"Tom's uncle is a writer.", parts:[{answers:["Is Tom's uncle a writer?"], extra:["Tom","Are"]}], why:"is 移到句首 → Is Tom's uncle a writer?" }
+    ]},
+  { id:"E4", sec:"五、句型轉換", concept:"問地點用 Where；主詞是複數用 are；my 要改成 your。",
+    variants:[
+      { type:"write", prompt:"依畫線部分造問句：", sentence:"My new notebooks are <u>on the table</u>.", parts:[{answers:["Where are your new notebooks?"], extra:["my","is"]}], why:"問地點用 Where；notebooks 是複數用 are；my 改 your → Where are your new notebooks?" },
+      { type:"write", prompt:"依畫線部分造問句：", sentence:"My cat is <u>under the bed</u>.", parts:[{answers:["Where is your cat?"], extra:["my","are"]}], why:"問地點用 Where；cat 是單數用 is；my 改 your → Where is your cat?（也可寫 Where's your cat?）" }
+    ]},
+
+  // ---------- 六、中翻英 ----------
+  { id:"F1", sec:"六、中翻英", concept:"動物的所有格是 Its（沒有撇號）；It's＝It is。Its name 後面要有 is。",
+    variants:[
+      { type:"write", prompt:"中翻英：", sentence:"他是我的狗。牠的名字叫洛基（Rocky）。", parts:[{answers:["It's my dog. Its name is Rocky.","It is my dog. Its name is Rocky."], extra:["It's","His"]}], why:"第一句 It's（＝It is）my dog；第二句「牠的」是 Its（沒有撇號），而且要有 is。" },
+      { type:"write", prompt:"中翻英：", sentence:"這是我的貓。牠的名字叫咪咪（Mimi）。", parts:[{answers:["This is my cat. Its name is Mimi.","It's my cat. Its name is Mimi.","It is my cat. Its name is Mimi."], extra:["It's","Her"]}], why:"「牠的」是 Its（沒有撇號），後面要有 is：Its name is Mimi." }
+    ]},
+  { id:"F2", sec:"六、中翻英", concept:"同位語（your son, Mike,）前後要逗號；be 動詞問句 Is 放句首。國小老師＝an elementary school teacher（elementary 母音開頭用 an）。",
+    variants:[
+      { type:"write", prompt:"中翻英：", sentence:"A：你兒子麥克（Mike），是名作家嗎？\nB：不是。他是位國小老師。", parts:[
+          {label:"A", answers:["Is your son, Mike, a writer?"], extra:["Are"]},
+          {label:"B", answers:["No, he isn't. He is an elementary school teacher."], extra:["a"]}],
+        why:"A：Is your son, Mike, a writer?　B：No, he isn't. He is an elementary school teacher.（elementary 用 an）" },
+      { type:"write", prompt:"中翻英：", sentence:"A：你女兒艾美（Amy），是名歌手嗎？\nB：不是。她是位國中生。", parts:[
+          {label:"A", answers:["Is your daughter, Amy, a singer?"], extra:["Are"]},
+          {label:"B", answers:["No, she isn't. She is a junior high school student."], extra:["an"]}],
+        why:"A：Is your daughter, Amy, a singer?　B：No, she isn't. She is a junior high school student." }
+    ]},
+  { id:"F3", sec:"六、中翻英", concept:"三樣東西並列：A, B, and C；兩個以上的主詞用 are；在彼此旁邊＝next to each other。",
+    variants:[
+      { type:"write", prompt:"中翻英：", sentence:"客廳、浴室和臥室就在彼此的旁邊。", parts:[{answers:["The living room, the bathroom, and the bedroom are next to each other.","The living room, bathroom, and bedroom are next to each other."], extra:["is","between"]}], why:"三個房間用「A, B, and C」連接，主詞是複數用 are，最後 next to each other。" },
+      { type:"write", prompt:"中翻英：", sentence:"廚房和飯廳就在彼此的旁邊。", parts:[{answers:["The kitchen and the dining room are next to each other.","The kitchen and dining room are next to each other."], extra:["is","above"]}], why:"兩個房間是複數主詞用 are → The kitchen and the dining room are next to each other." }
+    ]},
+  { id:"F4", sec:"六、中翻英", concept:"否定疑問句「不是…嗎？」用 Isn't 開頭；最愛＝favorite。回答依事實：是就 Yes, it is.",
+    variants:[
+      { type:"write", prompt:"中翻英：", sentence:"A：這張咖啡色的桌子不是你的最愛嗎？\nB：對，它是。", parts:[
+          {label:"A", answers:["Isn't this brown table your favorite?"], extra:["Is","my"]},
+          {label:"B", answers:["Yes, it is."], extra:["No,","isn't."]}],
+        why:"A：Isn't this brown table your favorite?　B：Yes, it is." },
+      { type:"write", prompt:"中翻英：", sentence:"A：這張藍色的椅子不是你的最愛嗎？\nB：不，它不是。", parts:[
+          {label:"A", answers:["Isn't this blue chair your favorite?"], extra:["Is","my"]},
+          {label:"B", answers:["No, it isn't."], extra:["Yes,","is."]}],
+        why:"A：Isn't this blue chair your favorite?　B：No, it isn't." }
+    ]},
+  { id:"F5", sec:"六、中翻英", concept:"「A 的牆壁」＝A's walls 或 the walls in A；後半句省略重複部分：but the kitchen's walls aren't.",
+    variants:[
+      { type:"write", prompt:"中翻英：", sentence:"飯廳的牆壁是紫色的，但廚房的牆壁不是。", parts:[{answers:["The dining room's walls are purple, but the kitchen's walls aren't.","The walls in the dining room are purple, but the walls in the kitchen aren't."], extra:["isn't.","and"]}], why:"walls 是複數用 are／aren't；前後相反用 but。" },
+      { type:"write", prompt:"中翻英：", sentence:"臥室的牆壁是藍色的，但浴室的牆壁不是。", parts:[{answers:["The bedroom's walls are blue, but the bathroom's walls aren't.","The walls in the bedroom are blue, but the walls in the bathroom aren't."], extra:["isn't.","and"]}], why:"walls 是複數用 are／aren't；前後相反用 but。" }
+    ]}
+];
+
+/* ===================== 資料庫（存在這台裝置上） ===================== */
+const DBKEY = "eng-mastery-db-v3";
+function newDB(){ return { sets:[{id:"sample", name:"範例：七年級英語（Starter～Unit 1 錯題）", created:Date.now(), bank:SAMPLE_BANK}], prog:{}, sound:true, draft:null }; }
+function loadDB(){ try{ const d=JSON.parse(localStorage.getItem(DBKEY)); if(d && Array.isArray(d.sets)) return d; }catch(e){} return null; }
+let DB = loadDB() || newDB();
+function saveDB(){ try{ localStorage.setItem(DBKEY, JSON.stringify(DB)); }catch(e){ toast("這台裝置的儲存空間不足，請刪掉一些舊考卷"); } }
+
+let VIEW="home", CUR=null, BANK=[], BY_ID={}, S=null;
+
+/* ===================== 小工具 ===================== */
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function blankify(html){ return html.replace(/_{3,}/g,'<span class="blank">&nbsp;</span>'); }
+function shuffle(a){ a=[...a]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function uid(){ return Math.random().toString(36).slice(2,10); }
+function fixQ(s){ return String(s==null?"":s).replace(/[’‘`´]/g,"'"); }
+function toast(msg){ const t=document.createElement("div"); t.className="toast"; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),2600); }
+function setLabel(t){ document.getElementById("phaseLabel").textContent=t; }
+const app=document.getElementById("app");
+async function copyText(t){
+  try{ await navigator.clipboard.writeText(t); toast("已複製 ✓"); return true; }catch(e){}
+  const ta=document.createElement("textarea"); ta.value=t; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select();
+  let ok=false; try{ ok=document.execCommand("copy"); }catch(e){} ta.remove(); toast(ok?"已複製 ✓":"無法自動複製，請長按選取後複製"); return ok;
+}
+
+/* ===================== 音效／朗讀 ===================== */
+let actx=null;
+function tone(f,d,type){ if(!DB.sound) return; try{ actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+  if(actx.state==="suspended") actx.resume();
+  const o=actx.createOscillator(), g=actx.createGain(); o.type=type||"sine"; o.frequency.value=f;
+  g.gain.setValueAtTime(.12,actx.currentTime); g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+d);
+  o.connect(g); g.connect(actx.destination); o.start(); o.stop(actx.currentTime+d);}catch(e){} }
+function toggleSound(){ DB.sound=!DB.sound; saveDB(); document.getElementById("soundBtn").textContent=DB.sound?"🔊":"🔇"; }
+function englishOf(v){
+  let t = v.dialogue ? v.dialogue.map(d=>d[1]).join(". ") : (v.passage || v.sentence || "");
+  t = t.replace(/<[^>]+>/g,"").replace(/_{2,}|\( ?\d ?\)/g," blank ").replace(/➔/g," ");
+  return /[A-Za-z]{2,}/.test(t) && !/[一-鿿]/.test(t) ? t : "";
+}
+function speak(t){ if(!t || !("speechSynthesis" in window)) return; speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(t); u.lang="en-US"; u.rate=.85; speechSynthesis.speak(u); }
+function speakItem(id,v){ speak(englishOf(BY_ID[id].variants[v])); }
+
+/* ===================== 批改 ===================== */
+const CONTR=[["what's","what is"],["who's","who is"],["where's","where is"],["how's","how is"],["that's","that is"],["he's","he is"],["she's","she is"],["it's","it is"],["name's","name is"],["isn't","is not"],["aren't","are not"],["i'm","i am"],["you're","you are"],["they're","they are"],["we're","we are"]];
+function norm(s){
+  s=fixQ(s).toLowerCase().replace(/[“”"]/g," ").replace(/[.,!?;:，。？！、()（）]/g," ");
+  CONTR.forEach(([a,b])=>{ s=s.replace(new RegExp("(^|\\s)"+a+"(?=\\s|$)","g"),"$1"+b); });
+  return s.replace(/\s+/g," ").trim();
+}
+function V(item){ return BY_ID[item.id].variants[item.v]; }
+function cur(){ return S.queue[S.idx]; }
+function partAnswers(item){
+  const v=V(item), key=item.id;
+  if(v.type!=="write") return [S.answers[key]];
+  return v.parts.map((p,i)=>{
+    if((S.modes[key]||"chips")==="chips"){ const c=S.chips[key]&&S.chips[key][i]; return c? c.picked.map(k=>c.tokens[k]).join(" ") : ""; }
+    return (S.answers[key]||[])[i]||"";
+  });
+}
+function isAnswered(item){
+  const v=V(item);
+  if(v.type==="choice") return S.answers[item.id]!==undefined && S.answers[item.id]!==null;
+  return partAnswers(item).every(a=>(a||"").trim()!=="");
+}
+function grade(item){
+  const v=V(item);
+  if(v.type==="choice") return {ok: S.answers[item.id]===v.answer, note:""};
+  if(v.type==="fill") return {ok: v.answers.some(a=>norm(a)===norm(S.answers[item.id])), note:""};
+  const ans=partAnswers(item); let ok=true, note="";
+  v.parts.forEach((p,i)=>{
+    const a=fixQ(ans[i]).trim();
+    if(!p.answers.some(x=>norm(x)===norm(a))){ ok=false; return; }
+    const endWant=p.answers[0].trim().slice(-1);
+    if(a && (a[0]!==a[0].toUpperCase() || (/[.?!]/.test(endWant) && a.slice(-1)!==endWant))) note="意思正確，但句首要大寫、句尾要加「"+endWant+"」，正式考試會被扣分喔！";
+  });
+  return {ok, note};
+}
+function correctText(v){
+  if(v.type==="choice") return v.options[v.answer];
+  if(v.type==="fill") return v.answers[0];
+  return v.parts.map(p=>(p.label?p.label+"：":"")+p.answers[0]).join("\n");
+}
+function userText(item){
+  const v=V(item);
+  if(v.type==="choice"){ const a=S.answers[item.id]; return a===undefined||a===null ? "（未作答）" : v.options[a]; }
+  const arr=partAnswers(item);
+  if(v.type==="fill") return arr[0]||"（未作答）";
+  return v.parts.map((p,i)=>(p.label?p.label+"：":"")+(arr[i]||"（未作答）")).join("\n");
+}
+
+/* =====================================================================
+   首頁：考卷列表
+   ===================================================================== */
+function goHome(){ if(S&&CUR) saveProg(); VIEW="home"; CUR=null; S=null; render(); window.scrollTo(0,0); }
+function statusOf(set){
+  const p=DB.prog[set.id];
+  if(!p) return ["尚未開始",""];
+  if(p.phase==="done") return ["🏆 已全部精熟","green"];
+  if(p.phase==="test") return ["第一次測驗進行中","amber"];
+  if(p.phase==="report" && p.round===1) return ["第一次測驗已交卷","amber"];
+  return [`錯題練習中（第 ${p.round} 輪）`,"amber"];
+}
+function renderHome(){
+  setLabel("選一份考卷開始練習");
+  const n=DB.sets.length;
+  app.innerHTML=`
+    <button class="btn pri big full" onclick="startWizard()">📷 新增考卷（用手機拍照）</button>
+    <div class="row" style="margin:6px 2px 14px"><span class="small">共 ${n} 份考卷</span>
+      <button class="linkbtn" onclick="startWizard(4)">已經有考卷代碼？點這裡貼上</button></div>
+    <div class="stack">${DB.sets.map(set=>{
+      const [st,cls]=statusOf(set); const p=DB.prog[set.id];
+      return `<div class="card setcard">
+        <div class="row" style="align-items:flex-start"><h3>${esc(set.name)}</h3><span class="tag ${cls}" style="white-space:nowrap">${st}</span></div>
+        <div class="small">${set.bank.length} 題 · ${new Date(set.created).toLocaleDateString("zh-TW")}</div>
+        <div class="setbtns">
+          <button class="btn ${p&&p.phase==="done"?"gray":"ok"}" onclick="openSet('${set.id}')">${!p?"開始作答 ›":p.phase==="done"?"查看成績":"繼續 ›"}</button>
+          <button class="btn gray sm" onclick="shareSet('${set.id}')">📲 傳到平板</button>
+          <button class="btn gray sm" onclick="printDialog('${set.id}')">🖨 列印</button>
+          <button class="btn red sm" onclick="askDelete('${set.id}')">刪除</button>
+        </div>
+      </div>`;}).join("")}</div>`;
+}
+function askDelete(id){
+  const set=DB.sets.find(s=>s.id===id);
+  modal("刪除這份考卷？",`「${esc(set.name)}」和它的作答紀錄會一起刪除，不能復原。`,[["取消","gray","closeModal()"],["刪除","red",`closeModal();delSet('${id}')`]]);
+}
+function delSet(id){ DB.sets=DB.sets.filter(s=>s.id!==id); delete DB.prog[id]; saveDB(); render(); }
+
+/* =====================================================================
+   新增考卷：5 步驟引導
+   ===================================================================== */
+function startWizard(step){
+  if(!DB.draft) DB.draft={step:1, name:"", bank:[], pages:0, title:""};
+  if(step) DB.draft.step=step;
+  saveDB(); VIEW="wizard"; render(); window.scrollTo(0,0);
+}
+function wizGo(step){ DB.draft.step=step; saveDB(); renderWizard(); window.scrollTo(0,0); }
+function cancelWizard(){
+  if(DB.draft && DB.draft.bank.length){
+    modal("放棄這份考卷？",`已經整理好 ${DB.draft.bank.length} 題，放棄的話要重新來過。`,[["繼續整理","gray","closeModal()"],["放棄","red","closeModal();DB.draft=null;saveDB();goHome()"]]);
+  } else { DB.draft=null; saveDB(); goHome(); }
+}
+function renderWizard(){
+  const d=DB.draft, st=d.step, next=d.pages>0;
+  setLabel(`新增考卷｜步驟 ${st} / 5`);
+  const bar=`<div class="steps">${[1,2,3,4,5].map(i=>`<div class="${i<=st?"on":""}"></div>`).join("")}</div>`;
+  const back = st>1 ? `<button class="btn gray" onclick="wizGo(${next&&st===4?3:st-1})">‹ 上一步</button>` : `<button class="btn gray" onclick="cancelWizard()">✕ 取消</button>`;
+  let body="";
+  if(st===1){
+    body=`<h2><span class="stepno">1</span>打開考卷小幫手</h2>
+      <p>需要準備：<b>手機裝好 Gemini App（免費）</b>，以及<b>老師改好的考卷</b>（要有紅筆批改）。</p>
+      ${GEM_URL ? `
+        <a class="btn pri big full" href="${esc(GEM_URL)}" target="_blank" rel="noopener" onclick="setTimeout(()=>wizGo(2),400)">✨ 打開「考卷錯題小幫手」</a>
+        <p class="small">會開啟 Gemini。第一次使用時，如果出現登入畫面，用 Google 帳號登入即可。</p>` : `
+        <div class="stack">
+          <div><b>① 先複製整理指令</b><br><button class="btn pri full" style="margin-top:6px" onclick="copyText(PROMPT).then(()=>{DB.draft.copied=true;saveDB();renderWizard();})">📋 複製指令${d.copied?"（已複製 ✓）":""}</button></div>
+          <div><b>② 打開 Gemini，開一個新對話</b><br><a class="btn ok full" style="margin-top:6px" href="${GEMINI_URL}" target="_blank" rel="noopener">打開 Gemini ›</a></div>
+          <div class="note">在 Gemini 的輸入框<b>長按 → 貼上</b>剛剛複製的指令，<b>先不要送出</b>，下一步要一起附上照片。</div>
+        </div>`}`;
+  } else if(st===2){
+    body=`<h2><span class="stepno">2</span>${next?"上傳下一頁":"上傳考卷"}</h2>
+      ${next ? `<div class="note" style="margin-bottom:10px">回到<b>剛才同一個 Gemini 對話</b>，直接上傳下一頁就好，<b>不用再貼指令</b>。</div>`:""}
+      <p style="margin-top:0">在 Gemini 對話框按 <b>＋</b>，選一種方式${GEM_URL||next?"，然後按送出":"，跟剛剛貼上的指令<b>一起送出</b>"}：</p>
+      <div class="stack">
+        <div class="pv"><b>📸 現場拍照</b>　選「相機」<ul class="tips" style="font-size:16px">
+          <li><b>一次只拍一頁</b>，考卷攤平放在桌上</li>
+          <li>光線要亮，不要有手或影子擋住，正對考卷拍</li>
+          <li>老師的<b>紅筆打叉、訂正</b>一定要拍清楚</li>
+          <li>姓名欄可以先用手指或紙遮住</li></ul></div>
+        <div class="pv"><b>📄 手機裡的 PDF 檔</b>　選「檔案」，找到 PDF 選起來<ul class="tips" style="font-size:16px">
+          <li>掃描 App 存的考卷 PDF、老師傳的題目卷都可以</li>
+          <li>之前用這個網頁印出來的<b>考卷或答案卷 PDF</b> 也可以（兩個都上傳，答案會更準）</li>
+          <li>頁數多時 Gemini 會分批整理，網頁會提醒你回去打「繼續」</li></ul></div>
+        <div class="pv"><b>🖼 相簿裡的照片</b>　選「相簿」，可以一次選好幾張</div>
+      </div>`;
+  } else if(st===3){
+    body=`<h2><span class="stepno">3</span>複製 Gemini 的結果</h2>
+      <p>等 Gemini 回覆完（大約 10～40 秒）。它會給你一個<b>灰色的程式碼框</b>，裡面是一堆英文和符號，這是正常的。</p>
+      <div class="note">👉 按程式碼框<b>右上角的「複製」圖示</b>（兩個重疊的方框），就會整段複製起來。<br>找不到的話，也可以按回覆下方的複製按鈕。</div>
+      <p class="small" style="margin-top:12px">如果 Gemini 說「照片看不清楚」，請回到上一步重拍。如果它沒有給程式碼框，可以回它一句：「請只用 json 程式碼框輸出」。</p>`;
+  } else if(st===4){
+    body=`<h2><span class="stepno">4</span>貼回這裡</h2>
+      <p>回到這個網頁，把剛剛複製的內容貼到下面框框。</p>
+      <button class="btn pri full" onclick="pasteFromClipboard()">📋 一鍵貼上</button>
+      <p class="small" style="margin:8px 0 4px">一鍵貼上沒反應的話：長按下面框框 → 選「貼上」。</p>
+      <textarea class="txt" id="pasteBox" placeholder="把 Gemini 的結果（或考卷代碼）貼在這裡…"></textarea>
+      <div id="pasteMsg"></div>
+      <button class="btn ok big full" style="margin-top:12px" onclick="processPaste()">讀取題目 ›</button>`;
+  } else if(st===5){
+    body=renderPreview();
+  }
+  app.innerHTML=`${bar}<div class="card wiz">${body}
+    ${st<4?`<div class="nav">${back}<button class="btn pri" onclick="wizGo(${st+1})">${st===3?"我複製好了 ›":"下一步 ›"}</button></div>`:""}
+    ${st===4?`<div class="nav">${back}<span></span></div>`:""}
+  </div>`;
+}
+async function pasteFromClipboard(){
+  try{ const t=await navigator.clipboard.readText(); if(t){ document.getElementById("pasteBox").value=t; processPaste(); return; } }catch(e){}
+  toast("請長按框框，選「貼上」");
+  document.getElementById("pasteBox").focus();
+}
+
+/* ---------- 解析 Gemini 的回覆 ---------- */
+function tryParse(s){
+  try{ return JSON.parse(s); }catch(e){}
+  let t=s.replace(/[“”]/g,'"').replace(/,\s*([}\]])/g,"$1").replace(/ /g," ");
+  try{ return JSON.parse(t); }catch(e){}
+  return null;
+}
+function extractObjects(txt){
+  const blocks=[]; const re=/```(?:json|JSON)?\s*([\s\S]*?)```/g; let m;
+  while((m=re.exec(txt))) blocks.push(m[1]);
+  if(!blocks.length){ const s=txt.indexOf("{"), e=txt.lastIndexOf("}"); if(s>=0&&e>s) blocks.push(txt.slice(s,e+1)); }
+  return blocks.map(b=>{ let o=tryParse(b.trim());
+    if(!o){ const s=b.indexOf("{"), e=b.lastIndexOf("}"); if(s>=0&&e>s) o=tryParse(b.slice(s,e+1)); }
+    return o; });
+}
+const CONF={"its":"it's","it's":"its","is":"are","are":"is","am":"is","his":"her","her":"his","he":"she","she":"he","a":"an","an":"a","my":"your","your":"my","who":"what","what":"who","isn't":"aren't","aren't":"isn't","this":"that","that":"this","they":"we"};
+function autoExtra(ans){
+  const c=[]; ans.split(" ").forEach(tok=>{ const m=tok.match(/^([A-Za-z']+)(.*)$/); if(!m) return;
+    const w=m[1], r=CONF[w.toLowerCase()]; if(!r) return;
+    c.push((w[0]===w[0].toUpperCase()? r[0].toUpperCase()+r.slice(1) : r)+m[2]); });
+  return shuffle([...new Set(c)]).slice(0,2);
+}
+function mkVariant(q){
+  const type={c:"choice",f:"fill",w:"write"}[q.t]; if(!type) throw Error("看不出是什麼題型");
+  const v={type, prompt:String(q.p||"請作答："), why:String(q.why||""), hint:String(q.hint||"")};
+  if(q.passage) v.passage=String(q.passage);
+  if(Array.isArray(q.dlg)&&q.dlg.length) v.dialogue=q.dlg.map(d=>Array.isArray(d)?[String(d[0]||""),String(d[1]==null?"":d[1])]:["",String(d)]);
+  if(q.sent) v.sentence=esc(q.sent).replace(/\[\[(.+?)\]\]/g,"<u>$1</u>");
+  if(type==="choice"){
+    if(!Array.isArray(q.o)||q.o.length<2) throw Error("缺少選項");
+    v.options=q.o.map(o=>String(o).replace(/^\s*\(?[A-Da-d][).]\s*/,""));
+    v.answer=typeof q.a==="string"&&/^[A-Da-d]$/.test(q.a.trim()) ? "abcd".indexOf(q.a.trim().toLowerCase()) : Number(q.a);
+    if(!(v.answer>=0&&v.answer<v.options.length)) throw Error("正確答案的位置不正確");
+  }
+  if(type==="fill"){
+    const a=(Array.isArray(q.a)?q.a:[q.a]).filter(x=>x!=null&&String(x).trim()).map(x=>fixQ(x).trim());
+    if(!a.length) throw Error("缺少答案"); v.answers=a;
+  }
+  if(type==="write"){
+    const parts = Array.isArray(q.parts)&&q.parts.length
+      ? q.parts.map(p=>({label:String(p.label||""), answers:(Array.isArray(p.a)?p.a:[p.a])}))
+      : [{label:"", answers:(Array.isArray(q.a)?q.a:[q.a])}];
+    parts.forEach(p=>{ p.answers=p.answers.filter(x=>x!=null&&String(x).trim()).map(x=>fixQ(x).trim()); });
+    if(parts.some(p=>!p.answers.length)) throw Error("缺少答案");
+    parts.forEach(p=>p.extra=autoExtra(p.answers[0]));
+    v.parts=parts;
+  }
+  return v;
+}
+function convertQ(q){
+  const variants=[mkVariant(q)];
+  if(q.var && typeof q.var==="object"){
+    try{
+      const m=Object.assign({},q,{hint:"",why:""},q.var); delete m.var;
+      const ctx=["passage","dlg","sent"]; if(ctx.some(k=>k in q.var)) ctx.forEach(k=>{ if(!(k in q.var)) delete m[k]; });
+      if("parts" in q.var) delete m.a; if("a" in q.var && !("parts" in q.var)) delete m.parts;
+      variants.push(mkVariant(m));
+    }catch(e){}
+  }
+  return {id:"q"+uid(), sec:String(q.sec||""), concept:String(q.tip||""), sure:q.sure!==false, variants};
+}
+async function processPaste(){
+  const box=document.getElementById("pasteBox"), msg=document.getElementById("pasteMsg");
+  const txt=(box.value||"").trim();
+  if(!txt){ msg.innerHTML=`<div class="err">框框裡還沒有內容喔。</div>`; return; }
+  const codeM=txt.match(/EQ1[zp][A-Za-z0-9_-]+/);
+  if(codeM){ try{ const data=await decodeSet(codeM[0]); addSharedSet(data); }catch(e){ msg.innerHTML=`<div class="err">考卷代碼不完整，請重新複製一次。</div>`; } return; }
+  if(!txt.includes("{")){
+    msg.innerHTML = /看不清|重拍|模糊/.test(txt)
+      ? `<div class="err">Gemini 說照片看不清楚。請回到步驟 2，<b>攤平、光線充足、正面</b>重拍一次。</div><button class="btn gray full" style="margin-top:8px" onclick="wizGo(2)">回步驟 2 重拍</button>`
+      : `<div class="err">這段內容裡找不到題目資料。請回 Gemini 跟它說下面這句，再重新複製：</div>${fixLine()}`;
+    return;
+  }
+  const objs=extractObjects(txt), d=DB.draft; let added=0, errs=[], empty=0, bad=0;
+  objs.forEach(o=>{
+    if(!o || !Array.isArray(o.q)){ bad++; return; }
+    if(!o.q.length) empty++;
+    if(o.title && !d.title) d.title=String(o.title);
+    d.more = o.more ? String(o.more) : "";
+    o.q.forEach((q,i)=>{ try{ d.bank.push(convertQ(q)); added++; }catch(e){ errs.push(`有 1 題無法讀取（${e.message}），已略過`); } });
+  });
+  if(!added && !empty){
+    msg.innerHTML=`<div class="err">題目資料的格式有點問題，讀不出來。請回 Gemini 跟它說下面這句，再重新複製：</div>${fixLine()}`;
+    return;
+  }
+  d.pages++; d.lastMsg = (empty&&!added) ? "這一頁 Gemini 判斷沒有錯題。" : `這次新增了 ${added} 題。` + (errs.length?`<br>${errs.join("<br>")}`:"");
+  if(!d.name) d.name = d.title || `英語考卷 ${new Date().toLocaleDateString("zh-TW")}`;
+  saveDB(); tone(523,.12); wizGo(5);
+}
+function fixLine(){
+  const s="格式有誤，請重新輸出這一頁，只用一個 json 程式碼框，不要其他文字。";
+  return `<div class="note" style="margin-top:6px">「${s}」</div><button class="btn gray full" style="margin-top:8px" onclick='copyText(${JSON.stringify(s)})'>📋 複製這句話</button>`;
+}
+
+/* ---------- 步驟 5：家長確認 ---------- */
+function renderPreview(){
+  const d=DB.draft, unsure=d.bank.filter(b=>!b.sure).length;
+  return `<h2><span class="stepno">5</span>確認題目和答案</h2>
+    ${d.lastMsg?`<div class="note" style="background:var(--ok-soft);border-color:#a7f3d0;color:var(--ok)">✓ ${d.lastMsg}</div>`:""}
+    <p>目前共 <b>${d.bank.length}</b> 題（${d.pages} 頁）。請快速看一下<b>綠色的正確答案</b>對不對，點一下就能改。</p>
+    ${d.more?`<div class="pv unsure" style="margin:10px 0"><b>📄 還沒整理完！</b>Gemini 說：${esc(d.more)}<br>請回到 Gemini 對話，輸入「<b>繼續</b>」送出，再把新的結果複製貼回來。
+      <div class="setbtns" style="margin-top:8px"><button class="btn gray sm" onclick="copyText('繼續')">📋 複製「繼續」</button><button class="btn pri sm" onclick="DB.draft.lastMsg='';wizGo(4)">我複製好了，去貼上 ›</button></div></div>`:""}
+    ${unsure?`<div class="note">⚠ 有 <b>${unsure}</b> 題 Gemini 沒把握（黃色框），請特別確認；不確定的話可以問老師。</div>`:""}
+    <div class="stack" style="margin-top:12px">${d.bank.map((b,i)=>previewItem(b,i)).join("")}</div>
+    <div style="margin-top:16px">
+      <label class="small" for="setName"><b>考卷名稱</b></label>
+      <input class="txt" id="setName" style="font-size:18px;margin-top:4px" value="${esc(d.name)}" oninput="DB.draft.name=this.value;saveDB()">
+    </div>
+    <div class="stack" style="margin-top:16px">
+      <button class="btn warn full" onclick="DB.draft.lastMsg='';wizGo(2)">＋ 還有其他頁或檔案要加</button>
+      <button class="btn ok big full" onclick="finishWizard()" ${d.bank.length?"":"disabled"}>✓ 全部好了，儲存考卷</button>
+      <button class="btn gray full" onclick="cancelWizard()">✕ 放棄這份考卷</button>
+    </div>`;
+}
+function previewItem(b,i){
+  const v=b.variants[0];
+  const ctx=[v.passage, v.dialogue&&v.dialogue.map(x=>(x[0]?x[0]+": ":"")+x[1]).join("\n"), v.sentence&&v.sentence.replace(/<\/?u>/g,"")].filter(Boolean).join("\n");
+  let ans="";
+  if(v.type==="choice") ans=`<div class="stack">${v.options.map((o,oi)=>`<button class="opt ${oi===v.answer?"right":""}" onclick="pvChoice(${i},${oi})"><span class="L">${"ABCD"[oi]||oi+1}</span><span>${esc(o)}${oi===v.answer?"　✓ 正確答案":""}</span></button>`).join("")}</div>`;
+  else if(v.type==="fill") ans=`<div class="small">正確答案：</div><input class="txt" value="${esc(v.answers[0])}" onchange="pvText(${i},0,this.value)">`;
+  else ans=v.parts.map((p,pi)=>`<div class="small">${p.label?p.label+" 句":""}正確答案：</div><input class="txt" value="${esc(p.answers[0])}" onchange="pvText(${i},${pi},this.value)">`).join("");
+  return `<div class="pv ${b.sure?"":"unsure"}">
+    <div class="row"><span class="tag ${b.sure?"":"amber"}">第 ${i+1} 題${b.sec?"｜"+esc(b.sec):""}</span>
+      <span class="small">${b.variants.length>1?"含變化題 ✓":"無變化題"}</span></div>
+    ${b.sure?"":`<div class="note">⚠ Gemini 對這題答案沒把握，請確認</div>`}
+    <div style="font-weight:800;margin-top:8px">${esc(v.prompt)}</div>
+    ${ctx?`<div class="ctx">${esc(ctx)}</div>`:""}
+    ${ans}
+    <div class="row" style="margin-top:8px">
+      ${b.sure?"<span></span>":`<button class="btn ok sm" onclick="pvSure(${i})">答案沒問題 ✓</button>`}
+      <button class="linkbtn" style="color:var(--bad)" onclick="pvDel(${i})">🗑 刪除這題</button></div>
+  </div>`;
+}
+function pvChoice(i,oi){ const b=DB.draft.bank[i]; b.variants[0].answer=oi; b.sure=true; saveDB(); renderWizard(); }
+function pvText(i,pi,val){ const b=DB.draft.bank[i], v=b.variants[0]; val=fixQ(val).trim(); if(!val) return;
+  if(v.type==="fill") v.answers=[val]; else { v.parts[pi].answers=[val]; v.parts[pi].extra=autoExtra(val); }
+  b.sure=true; saveDB(); toast("已更新答案 ✓"); }
+function pvSure(i){ DB.draft.bank[i].sure=true; saveDB(); renderWizard(); }
+function pvDel(i){ DB.draft.bank.splice(i,1); saveDB(); renderWizard(); }
+function finishWizard(){
+  const d=DB.draft; if(!d.bank.length) return;
+  const unsure=d.bank.filter(b=>!b.sure).length;
+  if(unsure && !d.okUnsure){
+    modal("還有沒確認的題目",`有 ${unsure} 題 Gemini 沒把握的答案還沒確認。要先存起來嗎？（之後孩子作答時，這些題目會標示「答案待確認」）`,
+      [["回去確認","gray","closeModal()"],["先存起來","ok","closeModal();DB.draft.okUnsure=true;finishWizard()"]]);
+    return;
+  }
+  const set={id:"s"+uid(), name:(d.name||"英語考卷").trim(), created:Date.now(), bank:d.bank};
+  DB.sets.unshift(set); DB.draft=null; saveDB();
+  VIEW="home"; render();
+  modal("考卷存好了！🎉",`「${esc(set.name)}」共 ${set.bank.length} 題。要在哪一台作答？`,
+    [["傳到孩子的平板","gray",`closeModal();shareSet('${set.id}')`],["就用這台開始","ok",`closeModal();openSet('${set.id}')`]]);
+}
+
+/* =====================================================================
+   傳到平板：把考卷壓縮成連結／代碼
+   ===================================================================== */
+function b64u(bytes){ let s=""; for(let i=0;i<bytes.length;i+=0x8000) s+=String.fromCharCode.apply(null,bytes.subarray(i,i+0x8000)); return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); }
+function unb64u(str){ str=str.replace(/-/g,"+").replace(/_/g,"/"); const bin=atob(str); const out=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) out[i]=bin.charCodeAt(i); return out; }
+async function encodeSet(set){
+  const bytes=new TextEncoder().encode(JSON.stringify({n:set.name,b:set.bank}));
+  if("CompressionStream" in window){
+    try{ const st=new Blob([bytes]).stream().pipeThrough(new CompressionStream("deflate-raw"));
+      return "EQ1z"+b64u(new Uint8Array(await new Response(st).arrayBuffer())); }catch(e){}
+  }
+  return "EQ1p"+b64u(bytes);
+}
+async function decodeSet(code){
+  const tag=code[3], bytes=unb64u(code.slice(4)); let json;
+  if(tag==="z"){ const st=new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw")); json=await new Response(st).text(); }
+  else json=new TextDecoder().decode(bytes);
+  const o=JSON.parse(json); if(!o || !Array.isArray(o.b) || !o.b.length) throw Error("bad"); return o;
+}
+let SHARE={link:"",code:""};
+async function shareSet(id){
+  const set=DB.sets.find(s=>s.id===id); const code=await encodeSet(set);
+  const isWeb=/^https?:/.test(location.protocol);
+  SHARE={code, link: isWeb ? location.href.split("#")[0]+"#eq="+code : ""};
+  const canShare=!!navigator.share;
+  if(isWeb){
+    modal("📲 傳到孩子的平板",`<p>把連結用 <b>LINE</b> 傳到平板，在平板上<b>點開連結</b>，考卷就會自動加進去。</p>`,
+      [...(canShare?[["用 LINE／訊息分享","ok","doShare()"]]:[]),["複製連結",canShare?"gray":"ok","copyText(SHARE.link)"],["關閉","gray","closeModal()"]]);
+  } else {
+    modal("📲 傳到孩子的平板",`<p>把「考卷代碼」用 LINE 傳到平板，然後在平板打開這個網頁 → 按「已經有考卷代碼？點這裡貼上」→ 貼上即可。</p><p class="small">（網頁放上網路後，這裡會改成直接傳連結，平板點開就好。）</p>`,
+      [...(canShare?[["用 LINE／訊息分享","ok","doShare()"]]:[]),["複製考卷代碼",canShare?"gray":"ok","copyText(SHARE.code)"],["關閉","gray","closeModal()"]]);
+  }
+}
+async function doShare(){ try{ await navigator.share(SHARE.link?{title:"英語錯題練習",text:"點開連結就能開始練習：",url:SHARE.link}:{title:"英語錯題考卷代碼",text:SHARE.code}); }catch(e){} }
+function addSharedSet(o){
+  const exists=DB.sets.find(s=>s.name===o.n && s.bank.length===o.b.length && s.bank[0].id===o.b[0].id);
+  if(exists){ DB.draft=null; saveDB(); VIEW="home"; render(); toast("這份考卷已經在列表裡了"); return; }
+  const set={id:"s"+uid(), name:o.n||"英語考卷", created:Date.now(), bank:o.b};
+  DB.sets.unshift(set); DB.draft=null; saveDB(); VIEW="home"; render();
+  modal("收到考卷了！🎉",`「${esc(set.name)}」共 ${set.bank.length} 題，已經加到列表。`,[["稍後再做","gray","closeModal()"],["開始作答","ok",`closeModal();openSet('${set.id}')`]]);
+}
+async function checkHashImport(){
+  const m=location.hash.match(/#eq=(EQ1[zp][A-Za-z0-9_-]+)/); if(!m) return;
+  history.replaceState(null,"",location.href.split("#")[0]);
+  try{ addSharedSet(await decodeSet(m[1])); }catch(e){ toast("連結不完整，請重新傳一次"); }
+}
+
+/* =====================================================================
+   作答（每份考卷各自記錄進度）
+   ===================================================================== */
+function freshState(){ return { phase:"test", round:1, queue:BANK.map(b=>({id:b.id,v:0})), idx:0, answers:{}, orders:{}, chips:{}, modes:{}, hintOpen:{}, results:{}, wrong:[], log:{} }; }
+function openSet(id){
+  CUR=DB.sets.find(s=>s.id===id); if(!CUR) return;
+  BANK=CUR.bank; BY_ID=Object.fromEntries(BANK.map(b=>[b.id,b]));
+  S=DB.prog[id]; if(!S || !S.queue.every(q=>BY_ID[q.id])) S=freshState();
+  VIEW="quiz"; saveProg(); render(); window.scrollTo(0,0);
+}
+function saveProg(){ if(CUR&&S){ DB.prog[CUR.id]=S; saveDB(); } }
+const save=saveProg;
+
+function ensureItemState(item){
+  const v=V(item), key=item.id;
+  if(v.type==="choice" && !S.orders[key]){ const idxs=v.options.map((_,i)=>i); S.orders[key] = S.round===1 ? idxs : shuffle(idxs); }
+  if(v.type==="write" && !S.chips[key]){
+    S.chips[key]=v.parts.map(p=>{ const toks=p.answers[0].split(" ").filter(Boolean).concat(p.extra||[]); return {tokens:toks, order:shuffle(toks.map((_,i)=>i)), picked:[]}; });
+  }
+}
+function ctxHtml(v){
+  return `${v.passage?`<div class="passage">${blankify(esc(v.passage))}</div>`:""}
+    ${v.dialogue?`<div class="dialogue">${v.dialogue.map(d=>`<div>${d[0]?`<span class="spk">${esc(d[0])}</span>`:""}<span>${blankify(esc(d[1]))}</span></div>`).join("")}</div>`:""}
+    ${v.sentence?`<div class="sentence">${blankify(v.sentence)}</div>`:""}`;
+}
+function renderQuestion(){
+  const item=cur(), v=V(item), b=BY_ID[item.id], total=S.queue.length;
+  ensureItemState(item);
+  const answered=S.queue.filter(isAnswered).length;
+  setLabel((S.phase==="test"?"第一次測驗":`第 ${S.round} 輪 錯題重測`)+`｜已作答 ${answered} / ${total}`);
+  const eng=englishOf(v);
+  app.innerHTML = `
+    <div class="row small"><span>第 ${S.idx+1} 題 / 共 ${total} 題</span><span>${Math.round(answered/total*100)}% 已作答</span></div>
+    <div class="prog"><div style="width:${answered/total*100}%"></div></div>
+    <div class="dots">${S.queue.map((q,i)=>`<button class="dot ${isAnswered(q)?"done":""} ${i===S.idx?"cur":""}" onclick="go(${i})">${i+1}</button>`).join("")}</div>
+    <div class="card">
+      <div class="row">
+        <span class="tag ${S.phase==="retest"?"amber":""}">${esc(b.sec||"錯題")}${S.phase==="retest"&&item.v===1?"・變化題":""}</span>
+        ${eng?`<button class="sbtn" onclick="speakItem('${item.id}',${item.v})">🔈 聽英文</button>`:""}
+      </div>
+      <div class="prompt">${esc(v.prompt)}</div>
+      ${ctxHtml(v)}
+      ${inputHtml(item)}
+      <div class="nav">
+        <button class="btn gray" onclick="go(${S.idx-1})" ${S.idx===0?"disabled":""}>‹ 上一題</button>
+        ${S.idx===total-1 ? `<button class="btn ok" onclick="trySubmit()">✓ 交卷批改</button>` : `<button class="btn pri" onclick="go(${S.idx+1})">下一題 ›</button>`}
+      </div>
+    </div>`;
+  save();
+}
+function inputHtml(item){
+  const v=V(item), key=item.id;
+  if(v.type==="choice"){
+    const order=S.orders[key], sel=S.answers[key], long=v.options.some(o=>o.length>28);
+    return `<div class="opts ${long?"":"two"}">${order.map((oi,pos)=>`
+      <button class="opt ${sel===oi?"sel":""}" onclick="pick(${oi})"><span class="L">${"ABCDEF"[pos]}</span><span>${esc(v.options[oi])}</span></button>`).join("")}</div>`;
+  }
+  const hint = v.hint ? (S.hintOpen[key] ? `<div class="hint">💡 提示：${esc(v.hint)}</div>` : `<button class="linkbtn" onclick="openHint()">💡 看提示</button>`) : "";
+  if(v.type==="fill") return `<input class="txt" id="fillIn" value="${esc(S.answers[key]||"")}" oninput="typeFill(this.value)" placeholder="輸入完整單字" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">${hint}`;
+  const mode=S.modes[key]||"chips";
+  const sw=`<div class="row" style="margin-top:6px"><span class="small">${mode==="chips"?"點單字排出句子（裡面有混入用不到的字喔）":"用鍵盤打出完整句子"}</span>
+    <button class="linkbtn" onclick="switchMode()">${mode==="chips"?"⌨️ 改用鍵盤":"🧩 改用字卡"}</button></div>`;
+  return sw + v.parts.map((p,i)=>{
+    const lab=p.label?`<div class="partlabel">${esc(p.label)} 句</div>`:"";
+    if(mode==="type"){ const val=(S.answers[key]||[])[i]||"";
+      return `${lab}<input class="txt" style="font-size:19px" value="${esc(val)}" oninput="typePart(${i},this.value)" placeholder="在這裡輸入英文句子" autocomplete="off" autocorrect="off" spellcheck="false">`; }
+    const c=S.chips[key][i];
+    const tray=c.picked.length ? c.picked.map((k,pi)=>`<button class="chip on" onclick="unchip(${i},${pi})">${esc(c.tokens[k])}</button>`).join("") : `<span class="ph">點下面的字卡放到這裡…</span>`;
+    const bank=c.order.filter(k=>!c.picked.includes(k)).map(k=>`<button class="chip" onclick="chip(${i},${k})">${esc(c.tokens[k])}</button>`).join("");
+    return `${lab}<div class="tray">${tray}</div><div class="bank">${bank||'<span class="ph">字卡用完了</span>'}</div>
+      ${c.picked.length?`<button class="linkbtn" onclick="clearChips(${i})">↺ 清空重排</button>`:""}`;
+  }).join("") + hint;
+}
+function go(i){ if(i<0||i>=S.queue.length) return; S.idx=i; renderQuestion(); window.scrollTo({top:0,behavior:"smooth"}); }
+function pick(oi){ S.answers[cur().id]=oi; tone(440,.08); renderQuestion(); }
+function typeFill(val){ S.answers[cur().id]=val; save(); refreshProgress(); }
+function typePart(i,val){ const k=cur().id; S.answers[k]=S.answers[k]||[]; S.answers[k][i]=val; save(); refreshProgress(); }
+function refreshProgress(){
+  const total=S.queue.length, answered=S.queue.filter(isAnswered).length;
+  setLabel((S.phase==="test"?"第一次測驗":`第 ${S.round} 輪 錯題重測`)+`｜已作答 ${answered} / ${total}`);
+  const bar=app.querySelector(".prog>div"); if(bar) bar.style.width=(answered/total*100)+"%";
+  app.querySelectorAll(".dot").forEach((d,i)=>d.classList.toggle("done",isAnswered(S.queue[i])));
+}
+function chip(i,k){ S.chips[cur().id][i].picked.push(k); tone(500,.05); renderQuestion(); }
+function unchip(i,pi){ S.chips[cur().id][i].picked.splice(pi,1); tone(360,.05); renderQuestion(); }
+function clearChips(i){ S.chips[cur().id][i].picked=[]; renderQuestion(); }
+function switchMode(){ const k=cur().id; S.modes[k]=(S.modes[k]||"chips")==="chips"?"type":"chips"; renderQuestion(); }
+function openHint(){ S.hintOpen[cur().id]=true; renderQuestion(); }
+function trySubmit(){
+  const left=S.queue.map((q,i)=>isAnswered(q)?null:i+1).filter(x=>x);
+  if(left.length) modal(`還有 ${left.length} 題沒作答`,`第 ${left.join("、")} 題還沒寫。要回去寫完，還是直接交卷？`,[["回去作答","gray",`closeModal();go(${left[0]-1})`],["直接交卷","ok","closeModal();submit()"]]);
+  else submit();
+}
+function submit(){
+  S.results={}; S.wrong=[];
+  S.queue.forEach(q=>{ const r=grade(q); S.results[q.id]=r; if(!r.ok) S.wrong.push(q.id); S.log[q.id]=S.log[q.id]||[]; S.log[q.id].push(r.ok); });
+  S.phase="report"; save(); renderReport(true); window.scrollTo(0,0);
+}
+function renderReport(fresh){
+  const total=S.queue.length, wrong=S.wrong.length, right=total-wrong, score=Math.round(right/total*100), perfect=wrong===0;
+  setLabel(`第 ${S.round} 輪 批改結果`);
+  const color=perfect?"var(--ok)":score>=70?"var(--pri)":"var(--bad)";
+  const notes=S.queue.filter(q=>S.results[q.id]&&S.results[q.id].ok&&S.results[q.id].note);
+  app.innerHTML=`<div class="card" style="text-align:center">
+      <div class="small" style="margin-bottom:8px">${esc(CUR.name)}</div>
+      <div class="score" style="border-color:${color};color:${color}"><span class="small">${S.round===1?"本次得分":"本輪答對"}</span><b>${S.round===1?score:right+"/"+total}</b><span class="small">答對 ${right} / ${total} 題</span></div>
+      <h2 style="margin:6px 0">${perfect?(S.round===1?"全對！太厲害了 🌟":"這一輪全部答對了！🎉"):"考卷改好了，加油！💪"}</h2>
+      <p class="small" style="font-size:16px">${perfect?"":`有 <b style="color:var(--bad)">${wrong}</b> 題要再複習。先看解說，看懂了再重新挑戰這些題目。`}</p>
+      <div class="grid">${S.queue.map((q,i)=>{const r=S.results[q.id]||{};return `<div class="cell ${r.ok?"ok":"bad"}"><div class="small">${i+1}</div><div class="m">${r.ok?(r.note?"✓⚠":"✓"):"✗"}</div></div>`;}).join("")}</div>
+      ${notes.length?`<div class="note" style="text-align:left">⚠ 有 ${notes.length} 題意思對了，但大小寫或標點不完整（第 ${notes.map(q=>S.queue.indexOf(q)+1).join("、")} 題），正式考試要注意！</div>`:""}
+      <div style="margin-top:18px">${perfect
+        ? (S.round===1 ? `<button class="btn ok" onclick="restartSet()">↺ 再做一次</button>` : `<button class="btn ok" onclick="finish()">看精熟成績單 ›</button>`)
+        : `<button class="btn warn" onclick="startReview()">📖 看錯題解說（${wrong} 題）</button>`}</div>
+    </div>`;
+  if(fresh){ if(perfect){ tone(523,.15); setTimeout(()=>tone(659,.2),130); confetti(); } else tone(280,.25,"triangle"); }
+}
+function startReview(){ S.phase="review"; save(); renderReview(); window.scrollTo(0,0); }
+function renderReview(){
+  const items=S.queue.filter(q=>S.wrong.includes(q.id));
+  setLabel(`錯題解說｜${items.length} 題`);
+  app.innerHTML=`<div class="banner"><div class="small" style="color:#fff;opacity:.9">錯題解說模式</div><h2>這 ${items.length} 題要搞懂</h2>
+      <div style="font-size:15px">紅色是你的答案、綠色是正確答案。看完解說後，會用「同觀念的新題目」再考一次！</div></div>
+    <div class="stack">${items.map((item,n)=>{
+      const v=V(item), b=BY_ID[item.id], eng=englishOf(v); let body="";
+      if(v.type==="choice"){
+        body=`<div class="opts">${S.orders[item.id].map((oi,pos)=>{ const cls=oi===v.answer?"right":(S.answers[item.id]===oi?"wrongpick":"");
+          return `<div class="opt ${cls}"><span class="L">${"ABCDEF"[pos]}</span><span>${esc(v.options[oi])}${oi===v.answer?"　✓":""}${cls==="wrongpick"?"　✗ 你選的":""}</span></div>`;}).join("")}</div>`;
+        if(S.answers[item.id]===undefined) body=`<div class="note">這題沒有作答</div>`+body;
+      } else body=`<div class="cmp"><div class="you"><div class="lab">✗ 你的答案</div><div class="val" style="white-space:pre-line">${esc(userText(item))}</div></div>
+              <div class="ans"><div class="lab">✓ 正確答案</div><div class="val" style="white-space:pre-line">${esc(correctText(v))}</div></div></div>`;
+      return `<div class="card">
+        <div class="row"><span class="tag red">錯題 ${n+1}${b.sec?"｜"+esc(b.sec):""}</span>${eng?`<button class="sbtn" onclick="speakItem('${item.id}',${item.v})">🔈 聽英文</button>`:""}</div>
+        <div class="prompt">${esc(v.prompt)}</div>${ctxHtml(v)}${body}
+        ${b.sure===false?`<div class="note">⚠ 這題的答案是 AI 判斷的、家長還沒確認，如果覺得怪怪的請問老師。</div>`:""}
+        <div class="explain">${v.why?`<h4>💡 為什麼？</h4>${esc(v.why)}`:""}
+          ${v.tree?`<div class="tree"><div class="gp">${esc(v.tree.gp)}</div><div class="kids">${v.tree.kids.map(k=>`<div><b>${esc(k[0])}</b><div class="small">${esc(k[1])}</div></div>`).join("")}</div></div>`:""}
+          ${b.concept?`<h4 style="margin-top:8px">📌 觀念重點</h4>${esc(b.concept)}`:""}</div>
+      </div>`;}).join("")}</div>
+    <div class="sticky-bottom"><button class="btn ok" style="box-shadow:0 8px 20px rgba(5,150,105,.35)" onclick="startRetest()">我看懂了！開始錯題重測（${items.length} 題）›</button></div>`;
+}
+function startRetest(){
+  S.round++;
+  const want = S.round%2===0 ? 1 : 0;
+  S.queue = S.wrong.map(id=>({id, v:Math.min(want, BY_ID[id].variants.length-1)}));
+  S.queue.forEach(q=>{ delete S.answers[q.id]; delete S.orders[q.id]; delete S.chips[q.id]; delete S.modes[q.id]; delete S.hintOpen[q.id]; });
+  S.idx=0; S.phase="retest"; save(); renderQuestion(); window.scrollTo(0,0);
+}
+function finish(){ S.phase="done"; save(); renderDone(true); }
+function renderDone(fresh){
+  setLabel("🎉 全部精熟！");
+  const first=BANK.filter(b=>S.log[b.id] && S.log[b.id][0]===false);
+  app.innerHTML=`<div class="card" style="text-align:center">
+    <div style="font-size:64px">🏆</div>
+    <h2 style="margin:4px 0">恭喜！所有錯題都精熟了！</h2>
+    <p class="small" style="font-size:16px">${esc(CUR.name)}<br>一共練了 ${S.round} 輪。第一次就答對 ${BANK.length-first.length} / ${BANK.length} 題。</p>
+    ${first.length?`<div style="text-align:left;margin-top:14px"><b>曾經錯過的題目（家長／老師可參考）：</b>
+      <div class="stack" style="margin-top:8px">${first.map(b=>{const tries=S.log[b.id].length;const lab=b.concept||b.variants[0].prompt;return `<div class="row" style="border:1px solid var(--line);border-radius:12px;padding:8px 12px"><span style="font-size:15px">${esc(lab.length>34?lab.slice(0,34)+"…":lab)}</span><span class="tag ${tries>2?"red":"amber"}" style="white-space:nowrap">練了 ${tries} 次</span></div>`;}).join("")}</div></div>`:""}
+    <div class="setbtns" style="margin-top:18px;justify-content:center"><button class="btn pri" onclick="restartSet()">↺ 整份重新再考一次</button><button class="btn gray" onclick="goHome()">回考卷列表</button></div>
+  </div>`;
+  if(fresh) confetti();
+}
+function restartSet(){ S=freshState(); save(); render(); window.scrollTo(0,0); }
+
+
+/* =====================================================================
+   列印紙本（考卷／答案卷，可另存 PDF）
+   ===================================================================== */
+function printDialog(id,v){
+  v=v||0; const set=DB.sets.find(s=>s.id===id); const hasVar=set.bank.some(b=>b.variants.length>1);
+  modal("🖨 列印紙本",`<p style="margin-top:0">「${esc(set.name)}」共 ${set.bank.length} 題。<br>按下面按鈕會打開列印畫面，可以直接印出來，或在印表機選<b>「另存為 PDF」</b>存成檔案。考卷和答案卷要分開按、各存一次。</p>
+    ${hasVar?`<div class="small" style="font-weight:700;margin-bottom:6px">要印哪一種題目？</div>
+    <div class="setbtns"><button class="btn sm ${v===0?"pri":"gray"}" onclick="printDialog('${id}',0)">原題</button><button class="btn sm ${v===1?"pri":"gray"}" onclick="printDialog('${id}',1)">變化題（同觀念新題目）</button></div>
+    <p class="small">${v===1?"變化題適合拿來再練一次，考孩子是不是真的懂了。":"原題就是考卷上錯的那些題目。"}</p>`:""}`,
+    [["列印考卷","pri",`doPrint('${id}',${v},'exam')`],["列印答案卷","ok",`doPrint('${id}',${v},'key')`],["關閉","gray","closeModal()"]]);
+}
+function pCtx(vv){
+  let h="";
+  if(vv.samePsg) h+=`<div class="ref">（閱讀上一題的文章作答）</div>`;
+  else if(vv.passage) h+=`<div class="psg">${blankify(esc(vv.passage))}</div>`;
+  if(vv.dialogue) h+=`<div class="dlg">${vv.dialogue.map(d=>`<div>${d[0]?esc(d[0])+": ":""}${blankify(esc(d[1]))}</div>`).join("")}</div>`;
+  if(vv.sentence) h+=`<div class="sen">${blankify(vv.sentence)}</div>`;
+  return h;
+}
+function pPlain(vv){
+  const s=[vv.passage?"":(vv.dialogue?vv.dialogue.map(d=>(d[0]?d[0]+": ":"")+d[1]).join("　"):""), vv.sentence?vv.sentence.replace(/<[^>]+>/g,""):""].filter(Boolean).join("　");
+  return s.length>70?s.slice(0,70)+"…":s;
+}
+function examQ(vv,n){
+  if(vv.type==="choice"){
+    const long=vv.options.some(o=>o.length>22);
+    return `<div class="q"><div class="qh"><span class="no">(　　) ${n}.</span><span>${esc(vv.prompt)}</span></div>
+      <div class="body">${pCtx(vv)}<div class="ops ${long?"col":""}">${vv.options.map((o,i)=>`<div>(${"ABCDEF"[i]}) ${esc(o)}</div>`).join("")}</div></div></div>`;
+  }
+  if(vv.type==="fill") return `<div class="q"><div class="qh"><span class="no">${n}.</span><span>${esc(vv.prompt)}</span></div><div class="body">${pCtx(vv)}</div></div>`;
+  const lines=vv.parts.map(p=>{ const two=p.answers[0].length>55; return `<div class="line">${p.label?esc(p.label)+"：":""}</div>${two?'<div class="line"></div>':""}`; }).join("");
+  return `<div class="q"><div class="qh"><span class="no">${n}.</span><span>${esc(vv.prompt)}</span></div><div class="body">${pCtx(vv)}${lines}</div></div>`;
+}
+function keyQ(vv,n,b){
+  let a;
+  if(vv.type==="choice") a=`(${"ABCDEF"[vv.answer]}) ${esc(vv.options[vv.answer])}`;
+  else if(vv.type==="fill") a=esc(vv.answers[0]);
+  else a=vv.parts.map(p=>(p.label?esc(p.label)+"：":"")+esc(p.answers[0])).join("<br>");
+  const ref=vv.type==="choice"?"":pPlain(vv);
+  return `<div class="q"><div class="qh"><span class="no">${n}.</span><span class="ans">${a}</span></div>
+    <div class="body">${ref?`<div class="ref">題目：${esc(ref)}</div>`:""}
+    ${vv.why||b.concept?`<div class="exp">${vv.why?"解說："+esc(vv.why):""}${b.concept?`${vv.why?"<br>":""}觀念：${esc(b.concept)}`:""}</div>`:""}</div></div>`;
+}
+function buildPrint(set,v,kind){
+  let n=0,last=null,body="",lastPsg=null;
+  set.bank.forEach(b=>{ let vv=b.variants[Math.min(v,b.variants.length-1)];
+    if(kind==="exam" && vv.passage && vv.passage===lastPsg) vv=Object.assign({},vv,{samePsg:true});
+    lastPsg=vv.passage||null;
+    if((b.sec||"")!==last){ body+=`<h2>${esc(b.sec||"題目")}</h2>`; last=b.sec||""; }
+    n++; body+= kind==="exam"?examQ(vv,n):keyQ(vv,n,b); });
+  const ver=v===1?"（變化題）":"";
+  return `<div class="pa"><h1>${esc(set.name)}</h1>
+    <div class="sub">${kind==="exam"?"錯題重練卷":"答案與解說"}${ver}　共 ${n} 題</div>
+    ${kind==="exam"?`<div class="meta"><span>班級：__________</span><span>座號：______</span><span>姓名：______________</span><span>得分：______</span></div>`:`<div class="meta"><span></span></div>`}
+    ${body}<div class="foot">英語錯題精熟練習</div></div>`;
+}
+function doPrint(id,v,kind){
+  const set=DB.sets.find(s=>s.id===id); closeModal();
+  document.getElementById("printArea").innerHTML=buildPrint(set,v,kind);
+  const old=document.title;
+  document.title=`${set.name}_${kind==="exam"?"考卷":"答案卷"}${v===1?"_變化題":""}`.replace(/[\\/:*?"<>|]/g,"");
+  const restore=()=>{ document.title=old; window.removeEventListener("afterprint",restore); };
+  window.addEventListener("afterprint",restore);
+  setTimeout(()=>{ try{ window.print(); }catch(e){ toast("這個瀏覽器不支援列印"); } setTimeout(restore,60000); },80);
+}
+
+/* ===================== 共用 ===================== */
+function modal(title,msg,btns){
+  document.getElementById("modalRoot").innerHTML=`<div class="modal-bg"><div class="modal"><h3>${title}</h3><div>${msg}</div>
+    <div class="acts">${btns.map(b=>`<button class="btn ${b[1]}" onclick="${b[2]}">${b[0]}</button>`).join("")}</div></div></div>`;
+}
+function closeModal(){ document.getElementById("modalRoot").innerHTML=""; }
+function confetti(){
+  const colors=["#f43f5e","#f59e0b","#10b981","#3b82f6","#8b5cf6"];
+  for(let i=0;i<70;i++){ const d=document.createElement("div"); d.className="conf";
+    d.style.left=Math.random()*100+"vw"; d.style.background=colors[i%5];
+    d.style.animationDuration=(1.8+Math.random()*1.6)+"s"; d.style.animationDelay=(Math.random()*.5)+"s";
+    document.body.appendChild(d); setTimeout(()=>d.remove(),4200); }
+}
+function render(){
+  document.getElementById("soundBtn").textContent=DB.sound?"🔊":"🔇";
+  document.getElementById("homeBtn").style.visibility = VIEW==="home" ? "hidden" : "visible";
+  if(VIEW==="home") return renderHome();
+  if(VIEW==="wizard") return renderWizard();
+  if(S.phase==="test"||S.phase==="retest") renderQuestion();
+  else if(S.phase==="report") renderReport(false);
+  else if(S.phase==="review") renderReview();
+  else renderDone(false);
+}
+render();
+checkHashImport();
+</script>
+</body>
+</html>
